@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+@layer base {
+  html,
+  body,
+  #root {
+    @apply min-h-screen bg-zinc-50;
+  }
+}
