@@ -2,6 +2,15 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    container: {
+      screens: {
+        DEFAULT: "100%",
+        sm: "100%",
+        lg: "975px",
+        xl: "975px",
+        "2xl": "975px",
+      },
+    },
     extend: {
       screens: {
         md: "876px",
@@ -17,5 +26,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide"), require("tailwind-scrollbar")],
 };

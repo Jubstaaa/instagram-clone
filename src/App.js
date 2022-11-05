@@ -6,18 +6,15 @@ import Loader from "components/Loader";
 function App() {
   const user = useSelector((state) => state.auth.user);
   const showRoutes = useRoutes(routes);
-
-  if (!user) {
+  if (user === null) {
     return <Loader />;
   }
 
   return (
-    user && (
-      <>
-        <Toaster />
-        {showRoutes}
-      </>
-    )
+    <>
+      <Toaster />
+      {showRoutes}
+    </>
   );
 }
 
