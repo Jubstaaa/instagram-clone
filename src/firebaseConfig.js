@@ -33,18 +33,20 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: "twitter-clone-d11ce",
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
+  apiKey: "AIzaSyAJWk1F4lxJW5LviSex_UOtTkGlbP-BZow",
+  authDomain: "instagram-clone-f9b98.firebaseapp.com",
+  projectId: "instagram-clone-f9b98",
+  storageBucket: "instagram-clone-f9b98.appspot.com",
+  messagingSenderId: "613131455854",
+  appId: "1:613131455854:web:259b6b97af3f97b976057f",
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
-
+const storage = getStorage(app);
 const user = auth.currentUser;
 export const db = getFirestore(app);
 
@@ -187,40 +189,80 @@ export const removePhoto = async (user) => {
 
 export const updatePhoto = (user, file) => {
   const loading = toast.loading("Profile picture is updating");
-  const storage = getStorage(app);
-  const storageRef = ref(
-    storage,
-    `gs://instagram-clone-f9b98.appspot.com/${user.uid}`
-  );
-  const uploadTask = uploadBytesResumable(storageRef, file);
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {},
-    (error) => {
-      toast.error(error.code);
-    },
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-        await updateDoc(doc(db, "users", user.uid), {
-          photoURL: downloadURL,
-        });
-        updateProfile(auth.currentUser, {
-          photoURL: downloadURL,
-        })
-          .then(() => {
-            toast.success("Profile picture updated", {
-              id: loading,
-            });
-            updateRedux(user);
-          })
-          .catch((error) => {
-            toast.success("Profile photo could not be updated", {
-              id: loading,
-            });
+  if (!file) {
+    return;
+  } else if (!file.type.includes("image/jp")) {
+    return toast.error("Unsupported file type", { id: loading });
+  } else {
+    console.log(file);
+    const storageRef = ref(
+      storage,
+      `gs://instagram-clone-f9b98.appspot.com/${user.uid}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        toast.error(error.code);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          await updateDoc(doc(db, "users", user.uid), {
+            photoURL: downloadURL,
           });
-      });
-    }
-  );
+          updateProfile(auth.currentUser, {
+            photoURL: downloadURL,
+          })
+            .then(() => {
+              toast.success("Profile picture updated", {
+                id: loading,
+              });
+              updateRedux(user);
+            })
+            .catch((error) => {
+              toast.success("Profile photo could not be updated", {
+                id: loading,
+              });
+            });
+        });
+      }
+    );
+  }
+};
+
+export const uploadPhoto = (file, setFile, setDisable) => {
+  setDisable(true);
+  const loading = toast.loading("File is uploading");
+  if (!file) {
+    return;
+  } else if (!file.type.includes("image") && !file.type.includes("video")) {
+    return toast.error("Unsupported file type", { id: loading });
+  } else if (file.size > 2097152) {
+    return toast.error("File is too big!", { id: loading });
+  } else {
+    const storageRef = ref(
+      storage,
+      `gs://instagram-clone-f9b98.appspot.com/${file.name}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (err) => {
+        toast.error(err);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFile({ type: file.type, url: downloadURL });
+          toast.success("File is uploaded", {
+            id: loading,
+          });
+          setDisable(false);
+        });
+      }
+    );
+  }
 };
 
 export const updateEditProfile = async (
@@ -337,5 +379,59 @@ export const unfollower = async (authUser, user) => {
     updateRedux(authUser);
   } catch (e) {
     toast.error(e.code);
+  }
+};
+
+export const addPost = async ({ title, alt, location, file, user }) => {
+  const loading = toast.loading("Post is uploading");
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        title,
+        alt,
+        location,
+        uid: uuidv4(),
+        file,
+        date: new Date().getTime(),
+        comments: [],
+        likes: [],
+      }),
+    });
+    toast.success("Post shared", { id: loading });
+    updateRedux(user);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
+export const addComment = async (comment, user, post, authUser) => {
+  const loading = toast.loading("Comment is uploading");
+
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        ...post,
+        comments: [
+          ...post?.comments,
+          {
+            comment,
+            date: new Date().getTime(),
+            uid: uuidv4(),
+            userUid: authUser.uid,
+          },
+        ],
+      }),
+    });
+    toast.success("Comment posted", { id: loading });
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
+    console.log(e);
+    console.log("first");
   }
 };

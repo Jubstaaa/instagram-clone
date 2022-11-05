@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { unfollower, getFriendInfo, follow } from "firebaseConfig";
 import { Link } from "react-router-dom";
-import auth from "store/auth";
 function Friend({
   uid,
   loading,

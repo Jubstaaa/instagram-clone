@@ -5,11 +5,13 @@ import { CgProfile } from "react-icons/cg";
 import Search from "./Search";
 import Icon from "./Icon";
 import { useSelector } from "react-redux";
+import AddPost from "./AddPost";
 
 function Header() {
   const user = useSelector((state) => state.auth.user);
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef(null);
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -22,6 +24,7 @@ function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
+
   return (
     <header className=" bg-white border-b border-gray-300 sticky top-0 z-50 ">
       <div className="h-[60px] flex items-center justify-between container mx-auto">
@@ -38,7 +41,14 @@ function Header() {
           <div className="relative ">
             <Icon name="heart" className="cursor-pointer" size={22} />
           </div>
-          <Icon name="new" className="cursor-pointer" size={22} />
+          <Icon
+            onClick={() => {
+              setModal(true);
+            }}
+            name="new"
+            className="cursor-pointer"
+            size={22}
+          />
           <Icon name="explore" className="cursor-pointer" size={22} />
 
           <div
@@ -102,6 +112,7 @@ function Header() {
           </div>
         </div>
       </div>
+      {modal && <AddPost setModal={setModal} user={user} />}
     </header>
   );
 }

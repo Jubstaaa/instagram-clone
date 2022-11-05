@@ -1,6 +1,5 @@
 import Icon from "components/Icon";
 import { NavLink } from "react-router-dom";
-import classNames from "classnames";
 function Sidebar() {
   return (
     <div className="col-span-1 border-[1px] border-gray-300">

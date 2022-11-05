@@ -11,6 +11,7 @@ import Button from "components/Button";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Following from "./Following";
 import Follower from "./Follower";
+import NoPeople from "./NoPeople";
 
 function Profile() {
   const authUser = useSelector((state) => state.auth.user);
@@ -218,7 +219,7 @@ function Profile() {
             TAGGED
           </NavLink>
         </nav>
-        <Outlet />
+        <Outlet context={[userData]} />
         {unfollowModal && (
           <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
             <div
@@ -286,7 +287,8 @@ function Profile() {
                     <Icon name="close" size={18} />
                   </div>
                 </div>
-                <ul className=" text-center  max-h-[350px] overflow-auto ">
+
+                <ul className=" text-center min-h-[250px] max-h-[350px] overflow-auto relative ">
                   {userData.following.map((user) => (
                     <Following
                       key={user.uid}
@@ -298,6 +300,12 @@ function Profile() {
                       userData={userData}
                     />
                   ))}
+                  {userData.following.length === 0 && (
+                    <NoPeople
+                      title="People you follow"
+                      desc="Once you follow people, you'll see them here."
+                    />
+                  )}
                 </ul>
               </div>
             </div>
@@ -324,7 +332,7 @@ function Profile() {
                     <Icon name="close" size={18} />
                   </div>
                 </div>
-                <ul className=" text-center  max-h-[350px] overflow-auto ">
+                <ul className=" text-center min-h-[250px] max-h-[350px] overflow-auto relative ">
                   {userData.followers.map((user) => (
                     <Follower
                       key={user.uid}
@@ -336,6 +344,12 @@ function Profile() {
                       userData={userData}
                     />
                   ))}
+                  {userData.followers.length === 0 && (
+                    <NoPeople
+                      title="Followers"
+                      desc="You'll see all the people who follow you here."
+                    />
+                  )}
                 </ul>
               </div>
             </div>

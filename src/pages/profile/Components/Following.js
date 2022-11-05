@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { unfollow, getFriendInfo } from "firebaseConfig";
 import { Link } from "react-router-dom";
 function Following({
@@ -10,6 +10,8 @@ function Following({
   userData,
 }) {
   const [user, setUser] = useState(null);
+  const [modal, setModal] = useState(false);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     getFriendInfo(uid)
@@ -20,6 +22,18 @@ function Following({
         setUser(false);
       });
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [modalRef]);
 
   if (user === null) {
     return <></>;
@@ -64,10 +78,8 @@ function Following({
       {authUser.uid === userData.uid && (
         <div className="flex flex-col justify-between  pr-3">
           <button
-            onClick={async () => {
-              setLoading(true);
-              await unfollow(authUser, user);
-              setLoading(false);
+            onClick={() => {
+              setModal(true);
             }}
             className="text-black border relative border-[#dbdbdb] w-[114px] h-[30px] font-semibold  px-6 py-1 rounded  text-sm "
             type="button"
@@ -82,6 +94,51 @@ function Following({
               "Following"
             )}
           </button>
+        </div>
+      )}
+      {modal && (
+        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div
+            ref={modalRef}
+            className="relative w-5/12 max-w-2xl px-4  m-auto "
+          >
+            <div className="bg-white rounded-lg shadow relative ">
+              <div className="flex flex-col items-center justify-center p-5 border-b rounded-t space-y-1">
+                <img
+                  src={user.photoURL || "/img/no-avatar.jpeg"}
+                  alt=""
+                  className="w-[90px] h-[90px] rounded-full mb-5"
+                />
+                <p className="text-gray-900 text-sm text-center ">
+                  Unfollow @{user.username}?
+                </p>
+              </div>
+
+              <div
+                onClick={async () => {
+                  setModal(false);
+                  setLoading(true);
+                  await unfollow(authUser, user);
+                  setLoading(false);
+                }}
+                className="p-3 space-y-6 border-b  text-center cursor-pointer"
+              >
+                <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
+                  Unfollow
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   text-center cursor-pointer"
+                onClick={() => {
+                  setModal(false);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Cancel
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </li>
