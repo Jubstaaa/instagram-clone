@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { unfollow, getFriendInfo } from "firebaseConfig";
+import { unfollow, getFriendInfo, follow } from "firebaseConfig";
 import { Link } from "react-router-dom";
-function Following({
-  uid,
-  loading,
-  setLoading,
-  authUser,
-  setFollowingModal,
-  userData,
-}) {
+function Following({ uid, authUser, setFollowingModal, type = null }) {
   const [user, setUser] = useState(null);
   const [modal, setModal] = useState(false);
   const modalRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getFriendInfo(uid)
@@ -75,27 +69,50 @@ function Following({
           </span>
         </div>
       </div>
-      {authUser.uid === userData.uid && (
+      {authUser.uid !== user.uid && (
         <div className="flex flex-col justify-between  pr-3">
-          <button
-            onClick={() => {
-              setModal(true);
-            }}
-            className="text-black border relative border-[#dbdbdb] w-[114px] h-[30px] font-semibold  px-6 py-1 rounded  text-sm "
-            type="button"
-          >
-            {loading ? (
-              <img
-                className="h-6 w-6 m-auto absolute inset-0"
-                src="/img/loading-gray.svg"
-                alt=""
-              />
-            ) : (
-              "Following"
-            )}
-          </button>
+          {type === "follow" ? (
+            <button
+              onClick={async () => {
+                setLoading(true);
+                await follow(authUser, user);
+                setLoading(false);
+              }}
+              className="h-[30px] mt-1 w-20 flex items-center justify-center gap-x-2 rounded-md bg-brand font-semibold text-sm text-white relative"
+              type="submit"
+            >
+              {loading ? (
+                <img
+                  className="h-6 w-6 m-auto absolute inset-0"
+                  src="/img/loading.svg"
+                  alt=""
+                />
+              ) : (
+                "Follow"
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setModal(true);
+              }}
+              className="text-black border relative border-[#dbdbdb] w-[114px] h-[30px] font-semibold  px-6 py-1 rounded  text-sm "
+              type="button"
+            >
+              {loading ? (
+                <img
+                  className="h-6 w-6 m-auto absolute inset-0"
+                  src="/img/loading-gray.svg"
+                  alt=""
+                />
+              ) : (
+                "Remove"
+              )}
+            </button>
+          )}
         </div>
       )}
+
       {modal && (
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
           <div

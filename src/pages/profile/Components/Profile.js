@@ -27,6 +27,8 @@ function Profile() {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setUnfollowModal(false);
+        setFollowingModal(false);
+        setFollowersModal(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -61,13 +63,15 @@ function Profile() {
             videos`}
           </title>
         </Helmet>
-        <header className="flex items-center px-24 gap-x-24 py-4 pb-10">
-          <img
-            src={userData.photoURL || "/img/no-avatar.jpeg"}
-            alt=""
-            className="w-[150px] h-[150px] rounded-full"
-          />
-          <div className="flex w-full h-full justify-items-between items-start flex-col space-y-3">
+        <header className="flex items-center justify-start px-24 space-x-24  py-4 pb-10">
+          <div className="w-[150px] h-[150px]  relative flex justify-center items-center ">
+            <img
+              src={userData.photoURL || "/img/no-avatar.jpeg"}
+              alt=""
+              className="w-full h-full object-cover  rounded-full   "
+            />
+          </div>
+          <div className="flex w-6/12 justify-items-between items-start flex-col space-y-3">
             <div className="flex w-full justify-start items-center space-x-6">
               <h1 className="text-[28px] font-light">{userData.username}</h1>
               <div className="flex justify-center items-center space-x-2">
@@ -144,7 +148,7 @@ function Profile() {
             </div>
             <nav className="flex gap-x-10 items-center">
               <div>
-                <span className="font-semibold">{userData.posts.length}</span>{" "}
+                <span className="font-semibold">{userData?.posts?.length}</span>{" "}
                 posts
               </div>
               <div
@@ -154,7 +158,7 @@ function Profile() {
                 }}
               >
                 <span className="font-semibold">
-                  {userData.followers.length}
+                  {userData?.followers?.length}
                 </span>{" "}
                 followers
               </div>
@@ -165,7 +169,7 @@ function Profile() {
                 }}
               >
                 <span className="font-semibold">
-                  {userData.following.length}
+                  {userData?.following?.length}
                 </span>{" "}
                 following
               </div>
@@ -300,7 +304,7 @@ function Profile() {
                       userData={userData}
                     />
                   ))}
-                  {userData.following.length === 0 && (
+                  {userData?.following?.length === 0 && (
                     <NoPeople
                       title="People you follow"
                       desc="Once you follow people, you'll see them here."
@@ -344,7 +348,7 @@ function Profile() {
                       userData={userData}
                     />
                   ))}
-                  {userData.followers.length === 0 && (
+                  {userData?.followers?.length === 0 && (
                     <NoPeople
                       title="Followers"
                       desc="You'll see all the people who follow you here."

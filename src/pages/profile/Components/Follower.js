@@ -69,7 +69,6 @@ function Friend({
             >
               {user.username}
             </Link>
-            {authUser.uid === userData.uid}
 
             {!authUser.following.find((el) => el.uid === user.uid) &&
               authUser.uid === userData.uid && (
@@ -96,7 +95,7 @@ function Friend({
       {authUser.uid === userData.uid && (
         <div className="flex flex-col justify-between  pr-3">
           <button
-            onClick={async () => {
+            onClick={() => {
               setModal(true);
             }}
             className="text-black border relative border-[#dbdbdb] w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "

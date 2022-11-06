@@ -4,14 +4,16 @@ import Post from "./Components/Post";
 import { useEffect, useState } from "react";
 function Posts() {
   const [user] = useOutletContext();
-  const [posts, setPosts] = useState([...user.posts]);
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
-    setPosts([...user.posts].sort((b, a) => a.date - b.date));
+    if (user?.posts) {
+      setPosts([...user.posts].sort((b, a) => a.date - b.date));
+    }
   }, [user.posts]);
 
   return (
     <>
-      {user.posts.length === 0 ? (
+      {posts.length === 0 ? (
         <div className="flex justify-center flex-col items-center gap-4 pt-10">
           <div className="w-[62px] h-[62px] border-2 rounded-full border-black flex items-center justify-center">
             <Icon name="post" size={34} />

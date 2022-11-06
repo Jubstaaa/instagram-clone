@@ -7,6 +7,7 @@ import Profile from "pages/profile";
 import PrivateRoute from "components/PrivateRoute";
 import Layout from "pages/layout";
 import Posts from "pages/profile/posts";
+import PostDetails from "pages/profile/postDetails";
 import EditProfile from "pages/profile/edit";
 import Tagged from "pages/profile/tagged";
 import Edit from "pages/profile/Components/Edit";
@@ -15,10 +16,6 @@ import EditForm from "pages/profile/Components/EditForm";
 import ChangePassword from "pages/profile/Components/ChangePassword";
 const routes = [
   {
-    path: "*",
-    element: <ProfileNotFound />,
-  },
-  {
     path: "/",
     element: <Layout />,
     auth: true,
@@ -26,6 +23,10 @@ const routes = [
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: ":user/:postId",
+        element: <PostDetails />,
       },
       {
         path: "/:user",
@@ -69,6 +70,7 @@ const routes = [
       },
     ],
   },
+
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -90,6 +92,10 @@ const routes = [
         element: <Password />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <ProfileNotFound />,
   },
 ];
 

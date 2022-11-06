@@ -142,6 +142,29 @@ export const getUserInfo = async (uname) => {
   }
 };
 
+export const getPostInfo = async (uname, postId) => {
+  const username = await getDoc(doc(db, "usernames", uname));
+  if (username.exists()) {
+    const posts = (await getDoc(doc(db, "users", username.data().uid))).data()
+      .posts;
+    return posts.find((post) => post.uid === postId);
+  } else {
+    throw new Error("Kullanıcı bulunamadı!");
+  }
+};
+
+export const getComments = async (uname, postId) => {
+  const username = await getDoc(doc(db, "usernames", uname));
+  if (username.exists()) {
+    const posts = (await getDoc(doc(db, "users", username.data().uid))).data()
+      .posts;
+    const post = posts.find((post) => post.uid === postId);
+    return post.comments;
+  } else {
+    throw new Error("Kullanıcı bulunamadı!");
+  }
+};
+
 export const getFriendInfo = async (uid) => {
   return (await getDoc(doc(db, "users", uid))).data();
 };
@@ -237,8 +260,11 @@ export const uploadPhoto = (file, setFile, setDisable) => {
   if (!file) {
     return;
   } else if (!file.type.includes("image") && !file.type.includes("video")) {
+    setDisable(false);
+
     return toast.error("Unsupported file type", { id: loading });
   } else if (file.size > 2097152) {
+    setDisable(false);
     return toast.error("File is too big!", { id: loading });
   } else {
     const storageRef = ref(
@@ -431,7 +457,48 @@ export const addComment = async (comment, user, post, authUser) => {
     updateRedux(authUser);
   } catch (e) {
     toast.error(e);
-    console.log(e);
-    console.log("first");
+  }
+};
+
+export const addLikes = async (user, post, authUser) => {
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        ...post,
+        likes: [
+          ...post?.likes,
+          {
+            uid: authUser.uid,
+          },
+        ],
+      }),
+    });
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
+export const removeLikes = async (user, post, authUser) => {
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        ...post,
+        likes: [...post.likes.filter((like) => like.uid !== authUser.uid)],
+      }),
+    });
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
   }
 };

@@ -56,14 +56,12 @@ function Header() {
               setOpenMenu(!openMenu);
             }}
             ref={menuRef}
-            className="avatar cursor-pointer"
+            className="avatar cursor-pointer w-7 h-7 relative"
           >
-            <div className="rounded-full w-8 h-8">
-              <img
-                className="rounded-full"
-                src={user.photoURL || "/img/no-avatar.jpeg"}
-              />
-            </div>
+            <img
+              className="rounded-full h-full w-full"
+              src={user.photoURL || "/img/no-avatar.jpeg"}
+            />
             {openMenu && (
               <div className="absolute right-0 top-9 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1 ">
