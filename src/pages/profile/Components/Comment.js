@@ -1,11 +1,26 @@
 import { getFriendInfo } from "firebaseConfig";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import TimeAgo from "react-timeago";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
+import { deleteComment } from "firebaseConfig";
 
-function Comment({ comment }) {
+function Comment({ comment, post, authUser, userData }) {
   const [user, setUser] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setDeleteModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [modalRef]);
 
   useEffect(() => {
     getFriendInfo(comment.userUid)
@@ -41,9 +56,48 @@ function Comment({ comment }) {
           <p className="text-xs text-[#8e8e8e]">
             <TimeAgo date={comment.date} />
           </p>
-          <BiDotsHorizontalRounded className="w-6 h-6 cursor-pointer text-[#8e8e8e]" />
+          {user.uid === authUser.uid && (
+            <BiDotsHorizontalRounded
+              onClick={() => {
+                setDeleteModal(true);
+              }}
+              className="w-6 h-6 cursor-pointer text-[#8e8e8e]"
+            />
+          )}
         </div>
       </div>
+      {deleteModal && (
+        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div
+            ref={modalRef}
+            className="relative w-[400px] max-w-2xl px-4  m-auto "
+          >
+            <div className="bg-white rounded-lg shadow relative ">
+              <div
+                onClick={async () => {
+                  await deleteComment(userData, post, comment.uid, authUser);
+                  setDeleteModal(false);
+                }}
+                className="p-3 space-y-6 border-b  text-center cursor-pointer"
+              >
+                <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
+                  Delete
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   text-center cursor-pointer"
+                onClick={() => {
+                  setDeleteModal(false);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Cancel
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </li>
   );
 }

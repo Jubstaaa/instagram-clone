@@ -52,7 +52,7 @@ function AddPost({ setModal, user }) {
         className={classNames({
           "relative  max-w-[700px] px-4  m-auto  ": true,
           "w-full": file,
-          "w-5/12": !file,
+          "w-[400px]": !file,
         })}
       >
         <div className="bg-white rounded-lg shadow relative  ">
@@ -124,7 +124,7 @@ function AddPost({ setModal, user }) {
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
           <div
             ref={discardModal}
-            className="relative w-5/12 max-w-2xl px-4  m-auto "
+            className="relative w-[400px] max-w-2xl px-4  m-auto "
           >
             <div className="bg-white rounded-lg shadow relative ">
               <div className="flex flex-col items-center justify-center p-5 border-b rounded-t ">

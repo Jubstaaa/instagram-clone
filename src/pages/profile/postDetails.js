@@ -33,7 +33,7 @@ function PostDetails() {
       .catch((err) => {
         setPost(false);
       });
-  }, [postId, comments]);
+  }, [postId, comments, force]);
 
   useEffect(() => {
     getComments(user, postId)

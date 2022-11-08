@@ -100,7 +100,9 @@ function PostForm({ user, file, setModal }) {
               </div>
             )}
           </div>
-          <button className="absolute top-3 right-4 text-brand ">Share</button>
+          <button type="submit" className="absolute top-3 right-4 text-brand ">
+            Share
+          </button>
         </Form>
       )}
     </Formik>

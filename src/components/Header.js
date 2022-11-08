@@ -79,13 +79,13 @@ function Header() {
                     <Icon name="bookmark" size={22} className="mr-2" />
                     Saved
                   </a>
-                  <a
-                    href="#"
+                  <Link
+                    to="/accounts/edit"
                     className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
                   >
                     <Icon name="settings" size={22} className="mr-2" />
                     Settings
-                  </a>
+                  </Link>
                   <a
                     href="#"
                     className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"

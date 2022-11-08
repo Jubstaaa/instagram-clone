@@ -228,7 +228,7 @@ function Profile() {
           <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
             <div
               ref={modalRef}
-              className="relative w-5/12 max-w-2xl px-4  m-auto "
+              className="relative w-[400px] max-w-2xl px-4  m-auto "
             >
               <div className="bg-white rounded-lg shadow relative ">
                 <div className="flex flex-col items-center justify-center p-5 border-b rounded-t space-y-6">

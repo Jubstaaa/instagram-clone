@@ -37,7 +37,7 @@ function Following({ uid, authUser, setFollowingModal, type = null }) {
   }
 
   return (
-    <li key={user.uid} className="flex justify-between items-center">
+    <li className="flex justify-between items-center">
       <div className="flex items-center justify-start space-x-2  py-2 pl-3 pr-1 ">
         <Link
           onClick={() => {
@@ -117,7 +117,7 @@ function Following({ uid, authUser, setFollowingModal, type = null }) {
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
           <div
             ref={modalRef}
-            className="relative w-5/12 max-w-2xl px-4  m-auto "
+            className="relative w-[400px] max-w-2xl px-4  m-auto "
           >
             <div className="bg-white rounded-lg shadow relative ">
               <div className="flex flex-col items-center justify-center p-5 border-b rounded-t space-y-1">

@@ -36,12 +36,12 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAJWk1F4lxJW5LviSex_UOtTkGlbP-BZow",
-  authDomain: "instagram-clone-f9b98.firebaseapp.com",
-  projectId: "instagram-clone-f9b98",
-  storageBucket: "instagram-clone-f9b98.appspot.com",
-  messagingSenderId: "613131455854",
-  appId: "1:613131455854:web:259b6b97af3f97b976057f",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -430,6 +430,22 @@ export const addPost = async ({ title, alt, location, file, user }) => {
   }
 };
 
+export const deletePost = async (userData, post, authUser) => {
+  const loading = toast.loading();
+
+  try {
+    await updateDoc(doc(db, "users", userData.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+    toast.success("Post deleted", { id: loading });
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
 export const addComment = async (comment, user, post, authUser) => {
   const loading = toast.loading("Comment is uploading");
 
@@ -457,6 +473,30 @@ export const addComment = async (comment, user, post, authUser) => {
     updateRedux(authUser);
   } catch (e) {
     toast.error(e);
+  }
+};
+
+export const deleteComment = async (user, post, commentId, authUser) => {
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        ...post,
+        comments: [
+          ...post.comments.filter((comment) => comment.uid !== commentId),
+        ],
+      }),
+    });
+
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
+    console.log(e);
   }
 };
 
@@ -491,6 +531,7 @@ export const removeLikes = async (user, post, authUser) => {
         ...post,
       }),
     });
+
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayUnion({
         ...post,

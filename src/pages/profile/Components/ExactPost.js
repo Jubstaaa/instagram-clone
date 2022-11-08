@@ -1,12 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Icon from "components/Icon";
-import { addComment, addLikes, removeLikes } from "firebaseConfig";
+import { addComment, addLikes, removeLikes, deletePost } from "firebaseConfig";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Comment from "./Comment";
 import TimeAgo from "react-timeago";
-import Following from "./Following";
 import Likes from "./Likes";
+import useClipboard from "react-use-clipboard";
+import { toast } from "react-hot-toast";
+import {
+  FacebookShareButton,
+  FacebookMessengerShareButton,
+  TwitterShareButton,
+  EmailShareButton,
+} from "react-share";
 
 function ExactPost({
   post,
@@ -15,14 +22,21 @@ function ExactPost({
   authUser,
   force = null,
   setForce = null,
-  setPostModal,
+  setPostModal = null,
 }) {
   const modalRef = useRef(null);
   const likesRef = useRef(null);
+  const optionRef = useRef(null);
+  const deleteRef = useRef(null);
   const [comment, setComment] = useState("");
   const commentRef = useRef(null);
   const [likesModal, setLikesModal] = useState(false);
-
+  const [optionModal, setOptionModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [shareToModal, setShareToModal] = useState(false);
+  const [copyLink, setCopyLink] = useClipboard(
+    `${window.location.origin}/${userData.username}/${post.uid}`
+  );
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -46,6 +60,30 @@ function ExactPost({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [likesRef]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (optionRef.current && !optionRef.current.contains(event.target)) {
+        setOptionModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [optionRef]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (deleteRef.current && !deleteRef.current.contains(event.target)) {
+        setDeleteModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [deleteRef]);
 
   return (
     <div
@@ -90,7 +128,12 @@ function ExactPost({
                     </div>
                   </div>
 
-                  <BiDotsHorizontalRounded className="w-8 h-8 cursor-pointer m-4 text-[#8e8e8e]" />
+                  <BiDotsHorizontalRounded
+                    onClick={() => {
+                      setOptionModal(true);
+                    }}
+                    className="w-8 h-8 cursor-pointer m-4 text-[#8e8e8e]"
+                  />
                 </div>
               </div>
               <div className="items-start justify-start space-x-5 w-full  border-b">
@@ -122,7 +165,13 @@ function ExactPost({
                       )}
 
                       {comments.map((comment) => (
-                        <Comment key={comment.uid} comment={comment} />
+                        <Comment
+                          key={comment.uid}
+                          comment={comment}
+                          post={post}
+                          authUser={authUser}
+                          userData={userData}
+                        />
                       ))}
                     </ul>
                   ) : (
@@ -148,6 +197,7 @@ function ExactPost({
                           size={24}
                           onClick={() => {
                             removeLikes(userData, post, authUser);
+                            setForce(!force);
                           }}
                         />
                       ) : (
@@ -157,6 +207,7 @@ function ExactPost({
                           size={24}
                           onClick={() => {
                             addLikes(userData, post, authUser);
+                            setForce(!force);
                           }}
                         />
                       )}
@@ -187,6 +238,7 @@ function ExactPost({
                       <span
                         onClick={() => {
                           addLikes(userData, post, authUser);
+                          setForce(!force);
                         }}
                         className=" font-semibold cursor-pointer"
                       >
@@ -274,12 +326,237 @@ function ExactPost({
               <ul className=" text-center min-h-[250px] max-h-[350px] overflow-auto relative ">
                 {post?.likes?.map((user) => (
                   <Likes
+                    key={user.uid}
                     uid={user.uid}
                     authUser={authUser}
                     setLikesModal={setLikesModal}
                   />
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+      )}
+      {optionModal && (
+        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div
+            ref={optionRef}
+            className="relative w-[400px] max-w-2xl px-4  m-auto "
+          >
+            <div className="bg-white rounded-lg shadow relative ">
+              <div
+                onClick={async () => {
+                  setOptionModal(false);
+                  setDeleteModal(true);
+                }}
+                className="p-3 space-y-6 border-b  text-center cursor-pointer"
+              >
+                <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
+                  Delete
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6  border-b   text-center cursor-pointer"
+                onClick={() => {
+                  setOptionModal(false);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Edit
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   border-b  text-center cursor-pointer"
+                onClick={() => {
+                  setOptionModal(false);
+                }}
+              >
+                <Link
+                  to={`/${userData.username}/${post.uid}`}
+                  className="text-black text-sm font-normal leading-relaxed"
+                >
+                  Go to post
+                </Link>
+              </div>
+              <div
+                className="p-3 space-y-6   border-b  text-center cursor-pointer"
+                onClick={() => {
+                  setOptionModal(false);
+                  setShareToModal(true);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Share to...
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   border-b  text-center cursor-pointer"
+                onClick={() => {
+                  setOptionModal(false);
+                }}
+              >
+                <span
+                  onClick={(e) => {
+                    setCopyLink(e);
+                    setOptionModal(false);
+                    toast.success("Link copied to clipboard.");
+                  }}
+                  className="text-black text-sm font-normal leading-relaxed"
+                >
+                  Copy link
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   text-center cursor-pointer"
+                onClick={() => {
+                  setOptionModal(false);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Cancel
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {deleteModal && (
+        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div
+            ref={deleteRef}
+            className="relative w-[400px] max-w-2xl px-4  m-auto "
+          >
+            <div className="bg-white rounded-lg shadow relative ">
+              <div className="flex flex-col items-center justify-center p-5 border-b rounded-t ">
+                <h3 className="text-gray-900 text-lg font-semibold ">
+                  Delete post?
+                </h3>
+                <p className="text-sm text-[#8e8e8e]">
+                  Are you sure you want to delete this post?
+                </p>
+              </div>
+
+              <div
+                onClick={() => {
+                  deletePost(userData, post, authUser);
+                }}
+                className="p-3 space-y-6 border-b  text-center cursor-pointer"
+              >
+                <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
+                  Delete
+                </span>
+              </div>
+              <div
+                className="p-3 space-y-6   text-center cursor-pointer"
+                onClick={() => {
+                  setDeleteModal(false);
+                }}
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
+                  Cancel
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {shareToModal && (
+        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div
+            ref={deleteRef}
+            className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "
+          >
+            <div className="bg-white rounded-lg shadow relative ">
+              <div className="p-3  border-b  text-center  flex justify-between items-center">
+                <div></div>
+                <span className="  font-semibold leading-relaxed">
+                  Share to...
+                </span>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setShareToModal(false);
+                  }}
+                >
+                  <Icon name="close" size={18} />
+                </div>
+              </div>
+
+              <div className="flex justify-start items-center p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50">
+                <Icon name="share" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Share to Direct
+                </span>
+              </div>
+              <FacebookShareButton
+                url={`${window.location.origin}/${userData.username}/${post.uid}/`}
+                resetButtonStyle={false}
+                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <Icon name="facebook" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Share to Facebook
+                </span>
+              </FacebookShareButton>
+              <FacebookMessengerShareButton
+                url={`${window.location.origin}/${userData.username}/${post.uid}/`}
+                resetButtonStyle={false}
+                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <Icon name="direct" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Share to Messenger
+                </span>
+              </FacebookMessengerShareButton>
+              <TwitterShareButton
+                url={`${window.location.origin}/${userData.username}/${post.uid}/`}
+                resetButtonStyle={false}
+                title={`See this Instagram Clone photo by @${userData.username}`}
+                hashtags={["winniesoft", "instagramclone", "reactjs"]}
+                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <Icon name="twitter" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Share to Twitter
+                </span>
+              </TwitterShareButton>
+              <EmailShareButton
+                url={`${window.location.origin}/${userData.username}/${post.uid}/`}
+                resetButtonStyle={false}
+                subject={`See this Instagram Clone photo by @${userData.username}`}
+                body={`See this Instagram Clone photo by @${userData.username}`}
+                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <Icon name="mail" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Share via Email
+                </span>
+              </EmailShareButton>
+              <div
+                onClick={(e) => {
+                  setCopyLink(e);
+                  setShareToModal(false);
+                  toast.success("Link copied to clipboard.");
+                }}
+                className="flex justify-start items-center p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <Icon name="link" size={24} />
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Copy link
+                </span>
+              </div>
+              <div
+                onClick={() => {
+                  setShareToModal(false);
+                }}
+                className="flex justify-start items-center p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+              >
+                <div className="w-6 h-6"></div>
+                <span className="text-black text-sm font-semibold leading-relaxed">
+                  Cancel
+                </span>
+              </div>
             </div>
           </div>
         </div>
