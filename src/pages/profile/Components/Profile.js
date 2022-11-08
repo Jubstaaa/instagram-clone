@@ -57,12 +57,12 @@ function Profile() {
   return (
     userData && (
       <div>
-        <Helmet>
+        {/* <Helmet>
           <title>
             {`${userData.displayName} (@${userData.username}) • Instagram photos and
             videos`}
           </title>
-        </Helmet>
+        </Helmet> */}
         <header className="flex items-center justify-start px-24 space-x-24  py-4 pb-10">
           <div className="w-[150px] h-[150px]  relative flex justify-center items-center ">
             <img
