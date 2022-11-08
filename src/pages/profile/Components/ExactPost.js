@@ -502,7 +502,7 @@ function ExactPost({
                 url={`${window.location.origin}/${userData.username}/${post.uid}/`}
                 resetButtonStyle={false}
                 appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+                className="flex justify-start items-center w-full p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50 a"
               >
                 <Icon name="direct" size={24} />
                 <span className="text-black text-sm font-semibold leading-relaxed">
