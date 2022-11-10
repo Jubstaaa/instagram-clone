@@ -35,7 +35,9 @@ function Following({ uid, authUser, setFollowingModal, type = null }) {
   if (user === false) {
     return <></>;
   }
-
+  if (user === undefined) {
+    return <></>;
+  }
   return (
     <li className="flex justify-between items-center">
       <div className="flex items-center justify-start space-x-2  py-2 pl-3 pr-1 ">

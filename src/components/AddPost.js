@@ -5,7 +5,7 @@ import { uploadPhoto } from "firebaseConfig";
 import classNames from "classnames";
 import PostForm from "./PostForm";
 import { BsArrowLeft } from "react-icons/bs";
-function AddPost({ setModal, user }) {
+function AddPost({ setModal, user, type = null, fileRef = null, post = null }) {
   const modalRef = useRef(null);
   const discardModal = useRef(null);
   const [discard, setDiscard] = useState(false);
@@ -45,6 +45,12 @@ function AddPost({ setModal, user }) {
     };
   }, [discardModal]);
 
+  useEffect(() => {
+    if (type === "edit") {
+      setFile(fileRef);
+    }
+  }, []);
+
   return (
     <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
       <div
@@ -57,7 +63,16 @@ function AddPost({ setModal, user }) {
       >
         <div className="bg-white rounded-lg shadow relative  ">
           <div className="p-3 border-b  text-center  flex justify-between items-center">
-            {file && (
+            {file && type === "edit" ? (
+              <span
+                className="cursor-pointer"
+                onClick={() => {
+                  setDiscard(true);
+                }}
+              >
+                Cancel
+              </span>
+            ) : (
               <BsArrowLeft
                 onClick={() => {
                   setDiscard(true);
@@ -67,17 +82,17 @@ function AddPost({ setModal, user }) {
             )}
 
             <span className="w-full text-normal font-semibold leading-relaxed">
-              Create new post
+              {type === "edit" ? "Edit info " : "Create new post"}
             </span>
           </div>
-          <div className="min-h-[356px] h-[356px] flex items-center justify-between">
+          <div className="min-h-[356px] h-[356px] flex items-center justify-between relative">
             {!file && (
               <FileUploader
                 disabled={disable}
                 handleChange={handleChange}
                 name="file"
                 types={fileTypes}
-                classes="flex flex-col items-center justify-center p-5 rounded-t space-y-2 !absolute inset-0 "
+                classes="flex flex-col items-center justify-center p-5 rounded-t space-y-2 !absolute inset-0 w-100 h-100 "
               >
                 <Icon name="newPost" size={96} />
 
@@ -107,13 +122,20 @@ function AddPost({ setModal, user }) {
                       disablePictureInPicture
                       controls
                       controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar "
+                      className="w-full h-full"
                     >
                       <source src={file.url} type="video/mp4" />
                     </video>
                   )}
                 </div>
                 <div className="w-full h-full">
-                  <PostForm user={user} file={file} setModal={setModal} />
+                  <PostForm
+                    user={user}
+                    file={file}
+                    setModal={setModal}
+                    type={type}
+                    post={post}
+                  />
                 </div>
               </>
             )}

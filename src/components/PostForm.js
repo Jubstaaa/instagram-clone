@@ -2,21 +2,22 @@ import { Formik, Form } from "formik";
 import Icon from "./Icon";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useState } from "react";
-import { addPost } from "firebaseConfig";
+import { addPost, editPost } from "firebaseConfig";
 
-function PostForm({ user, file, setModal }) {
+function PostForm({ user, file, setModal, type, post }) {
   const [accesibility, setAccesibility] = useState(false);
   return (
     <Formik
       initialValues={{
-        title: "",
-        location: "",
-        alt: "",
-        file,
-        user,
+        title: type === "edit" ? post.title : "",
+        location: type === "edit" ? post.location : "",
+        alt: type === "edit" ? post.alt : "",
+        file: type === "edit" ? post.file : file,
+        user: user,
+        post,
       }}
       onSubmit={async (values) => {
-        await addPost(values);
+        type === "edit" ? await editPost(values) : await addPost(values);
         setModal(false);
       }}
     >
@@ -101,7 +102,7 @@ function PostForm({ user, file, setModal }) {
             )}
           </div>
           <button type="submit" className="absolute top-3 right-4 text-brand ">
-            Share
+            {type === "edit" ? "Done" : "Share"}
           </button>
         </Form>
       )}

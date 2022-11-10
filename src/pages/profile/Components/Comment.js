@@ -5,7 +5,7 @@ import TimeAgo from "react-timeago";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { deleteComment } from "firebaseConfig";
 
-function Comment({ comment, post, authUser, userData }) {
+function Comment({ comment, post, authUser, userData, type = null }) {
   const [user, setUser] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const modalRef = useRef(null);
@@ -37,6 +37,16 @@ function Comment({ comment, post, authUser, userData }) {
   }
   if (user === false) {
     return <></>;
+  }
+  if (type === "feed") {
+    return (
+      <p className="text-sm">
+        <Link to={`/${user.username}`}>
+          <span className="font-semibold">{user.username} </span>
+        </Link>
+        {comment.comment}
+      </p>
+    );
   }
 
   return (

@@ -100,7 +100,7 @@ export const register = async ({ email, password, fullName, username }) => {
           uid: response.user.uid,
           email: email,
           displayName: fullName,
-          photoURL: "",
+          photoURL: "/img/no-avatar.jpeg",
           website: "",
           bio: "",
           username: username.toLowerCase(),
@@ -196,10 +196,10 @@ export const removeUser = async (userData) => {
 
 export const removePhoto = async (user) => {
   await updateDoc(doc(db, "users", user.uid), {
-    photoURL: "",
+    photoURL: "/img/no-avatar.jpeg",
   });
   updateProfile(auth.currentUser, {
-    photoURL: "",
+    photoURL: "/img/no-avatar.jpeg",
   })
     .then(() => {
       toast.success("Profile picture removed");
@@ -431,6 +431,8 @@ export const addPost = async ({ title, alt, location, file, user }) => {
 };
 
 export const deletePost = async (userData, post, authUser) => {
+  delete post.user;
+
   const loading = toast.loading();
 
   try {
@@ -446,9 +448,38 @@ export const deletePost = async (userData, post, authUser) => {
   }
 };
 
-export const addComment = async (comment, user, post, authUser) => {
-  const loading = toast.loading("Comment is uploading");
+export const editPost = async ({ title, alt, location, file, user, post }) => {
+  delete post.user;
 
+  const loading = toast.loading();
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayRemove({
+        ...post,
+      }),
+    });
+    await updateDoc(doc(db, "users", user.uid), {
+      posts: arrayUnion({
+        title,
+        alt,
+        location,
+        uid: post.uid,
+        file: post.file,
+        date: post.date,
+        comments: post.comments,
+        likes: post.likes,
+      }),
+    });
+    toast.success("Post Updated", { id: loading });
+    updateRedux(user);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
+export const addComment = async (comment, user, post, authUser) => {
+  delete post.user;
+  const loading = toast.loading("Comment is uploading");
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -477,6 +508,7 @@ export const addComment = async (comment, user, post, authUser) => {
 };
 
 export const deleteComment = async (user, post, commentId, authUser) => {
+  delete post.user;
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -501,6 +533,7 @@ export const deleteComment = async (user, post, commentId, authUser) => {
 };
 
 export const addLikes = async (user, post, authUser) => {
+  delete post.user;
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -525,6 +558,7 @@ export const addLikes = async (user, post, authUser) => {
 };
 
 export const removeLikes = async (user, post, authUser) => {
+  delete post.user;
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -542,4 +576,16 @@ export const removeLikes = async (user, post, authUser) => {
   } catch (e) {
     toast.error(e);
   }
+};
+
+export const getFeed = async (following, myPosts) => {
+  const posts = [...myPosts];
+
+  for (let i = 0; i < following.length; i++) {
+    const userData = await getFriendInfo(following[i].uid);
+    userData.posts.map((post) => {
+      posts.push({ ...post, user: userData });
+    });
+  }
+  return posts;
 };

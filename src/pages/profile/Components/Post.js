@@ -1,3 +1,4 @@
+import Icon from "components/Icon";
 import { useRef, useState, useEffect } from "react";
 import { FaComment, FaHeart } from "react-icons/fa";
 import PostModal from "./PostModal";
@@ -29,11 +30,29 @@ function Post({ post, user }) {
         }}
         className="w-72 h-72 relative col-span-1 group cursor-pointer"
       >
-        <img
-          className="object-cover w-full h-full	"
-          src={post.file.url}
-          alt={post.alt}
-        />
+        {post.file.type.includes("image") ? (
+          <img
+            className="object-cover w-full h-full	"
+            src={post.file.url}
+            alt={post.alt}
+          />
+        ) : (
+          <>
+            <video
+              className="object-cover w-full h-full	"
+              disablePictureInPicture
+              controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar "
+            >
+              <source src={post.file.url} type="video/mp4" />
+            </video>
+            <Icon
+              size={18}
+              name="video"
+              className="absolute top-0 right-0 m-2"
+            />
+          </>
+        )}
+
         <div className="absolute hidden group-hover:flex justify-center items-center space-x-5 inset-0 w-full h-full bg-black/40 ">
           <div className="flex items-center justify-center space-x-2">
             <FaHeart className="text-white w-5 h-5" />

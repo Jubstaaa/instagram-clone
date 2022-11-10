@@ -84,12 +84,12 @@ function Profile() {
                     >
                       Edit Profile
                     </Link>
-                    <a
-                      href="#"
+                    <Link
+                      to="/accounts/edit"
                       className="text-black font-medium block ml-1 text-sm flex items-center justify-start "
                     >
                       <Icon name="settings" size={22} />
-                    </a>
+                    </Link>
                   </>
                 ) : authUser.following.find((el) => el.uid === userData.uid) ? (
                   <>

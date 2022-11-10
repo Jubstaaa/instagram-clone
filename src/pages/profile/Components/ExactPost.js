@@ -15,6 +15,7 @@ import {
   TwitterShareButton,
   EmailShareButton,
 } from "react-share";
+import AddPost from "components/AddPost";
 
 function ExactPost({
   post,
@@ -35,6 +36,7 @@ function ExactPost({
   const [optionModal, setOptionModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [shareToModal, setShareToModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [copyLink, setCopyLink] = useClipboard(
     `${window.location.origin}/${userData.username}/${post.uid}`
   );
@@ -122,9 +124,9 @@ function ExactPost({
                 )}
                 {post.file.type.includes("video") && (
                   <video
-                    disablePictureInPicture
                     controls
-                    controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar "
+                    controlsList=" nodownload noremoteplayback  foobar "
+                    className="w-full h-full"
                   >
                     <source src={post.file.url} type="video/mp4" />
                   </video>
@@ -151,13 +153,13 @@ function ExactPost({
                       onClick={() => {
                         setOptionModal(true);
                       }}
-                      className="w-8 h-8 cursor-pointer m-4 text-[#8e8e8e]"
+                      className="w-6 h-6 cursor-pointer m-4 text-[#8e8e8e]"
                     />
                   </div>
                 </div>
                 <div className="items-start justify-start space-x-5 w-full  border-b">
                   <div className=" flex flex-col justify-center items-center  h-72">
-                    {post.title || comments ? (
+                    {post.title && comments ? (
                       <ul className="w-full h-full max-h-full overflow-auto p-4 flex flex-col space-y-3">
                         {post.title && (
                           <li className="flex justify-start items-center space-x-4">
@@ -170,7 +172,7 @@ function ExactPost({
                               <div className="flex justify-start items-center space-x-1">
                                 <Link
                                   className="font-semibold cursor-pointer text-sm"
-                                  href={`/${userData.username}`}
+                                  to={`/${userData.username}`}
                                 >
                                   {userData.username}
                                 </Link>
@@ -365,27 +367,37 @@ function ExactPost({
               className="relative w-[400px] max-w-2xl px-4  m-auto "
             >
               <div className="bg-white rounded-lg shadow relative ">
-                <div
-                  onClick={async () => {
-                    setOptionModal(false);
-                    setDeleteModal(true);
-                  }}
-                  className="p-3 space-y-6 border-b  text-center cursor-pointer"
-                >
-                  <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
-                    Delete
-                  </span>
-                </div>
-                <div
-                  className="p-3 space-y-6  border-b   text-center cursor-pointer"
-                  onClick={() => {
-                    setOptionModal(false);
-                  }}
-                >
-                  <span className="text-black text-sm font-normal leading-relaxed">
-                    Edit
-                  </span>
-                </div>
+                {userData.uid === authUser.uid && (
+                  <>
+                    <div
+                      onClick={async () => {
+                        setOptionModal(false);
+                        setDeleteModal(true);
+                      }}
+                      className="p-3 space-y-6 border-b  text-center cursor-pointer"
+                    >
+                      <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
+                        Delete
+                      </span>
+                    </div>
+                    <div
+                      className="p-3 space-y-6  border-b   text-center cursor-pointer"
+                      onClick={() => {
+                        setOptionModal(false);
+                      }}
+                    >
+                      <span
+                        onClick={() => {
+                          setEditModal(true);
+                        }}
+                        className="text-black text-sm font-normal leading-relaxed"
+                      >
+                        Edit
+                      </span>
+                    </div>
+                  </>
+                )}
+
                 <div
                   className="p-3 space-y-6   border-b  text-center cursor-pointer"
                   onClick={() => {
@@ -581,6 +593,15 @@ function ExactPost({
               </div>
             </div>
           </div>
+        )}
+        {editModal && (
+          <AddPost
+            type="edit"
+            fileRef={post.file}
+            post={post}
+            user={userData}
+            setModal={setEditModal}
+          />
         )}
       </div>
     </>
