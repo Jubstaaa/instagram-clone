@@ -49,7 +49,7 @@ function Following({ uid, authUser, setFollowingModal, type = null }) {
           className=""
         >
           <img
-            className="h-11 w-11 inline-block rounded-full "
+            className="h-11 w-11 inline-block rounded-full object-cover "
             src={user.photoURL || "/img/no-avatar.jpeg"}
             alt=""
           />

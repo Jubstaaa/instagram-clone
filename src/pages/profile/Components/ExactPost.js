@@ -159,7 +159,7 @@ function ExactPost({
                 </div>
                 <div className="items-start justify-start space-x-5 w-full  border-b">
                   <div className=" flex flex-col justify-center items-center  h-72">
-                    {post.title && comments ? (
+                    {post.title || comments ? (
                       <ul className="w-full h-full max-h-full overflow-auto p-4 flex flex-col space-y-3">
                         {post.title && (
                           <li className="flex justify-start items-center space-x-4">
@@ -192,6 +192,8 @@ function ExactPost({
                             post={post}
                             authUser={authUser}
                             userData={userData}
+                            force={force}
+                            setForce={setForce}
                           />
                         ))}
                       </ul>
@@ -384,33 +386,27 @@ function ExactPost({
                       className="p-3 space-y-6  border-b   text-center cursor-pointer"
                       onClick={() => {
                         setOptionModal(false);
+                        setEditModal(true);
                       }}
                     >
-                      <span
-                        onClick={() => {
-                          setEditModal(true);
-                        }}
-                        className="text-black text-sm font-normal leading-relaxed"
-                      >
+                      <span className="text-black text-sm font-normal leading-relaxed">
                         Edit
                       </span>
                     </div>
                   </>
                 )}
 
-                <div
-                  className="p-3 space-y-6   border-b  text-center cursor-pointer"
+                <Link
+                  className="p-3 space-y-6   border-b  text-center cursor-pointer block"
+                  to={`/${userData.username}/${post.uid}`}
                   onClick={() => {
                     setOptionModal(false);
                   }}
                 >
-                  <Link
-                    to={`/${userData.username}/${post.uid}`}
-                    className="text-black text-sm font-normal leading-relaxed"
-                  >
+                  <span className="text-black text-sm font-normal leading-relaxed">
                     Go to post
-                  </Link>
-                </div>
+                  </span>
+                </Link>
                 <div
                   className="p-3 space-y-6   border-b  text-center cursor-pointer"
                   onClick={() => {
@@ -424,18 +420,13 @@ function ExactPost({
                 </div>
                 <div
                   className="p-3 space-y-6   border-b  text-center cursor-pointer"
-                  onClick={() => {
+                  onClick={(e) => {
+                    setCopyLink(e);
                     setOptionModal(false);
+                    toast.success("Link copied to clipboard.");
                   }}
                 >
-                  <span
-                    onClick={(e) => {
-                      setCopyLink(e);
-                      setOptionModal(false);
-                      toast.success("Link copied to clipboard.");
-                    }}
-                    className="text-black text-sm font-normal leading-relaxed"
-                  >
+                  <span className="text-black text-sm font-normal leading-relaxed">
                     Copy link
                   </span>
                 </div>
@@ -601,6 +592,8 @@ function ExactPost({
             post={post}
             user={userData}
             setModal={setEditModal}
+            force={force}
+            setForce={setForce}
           />
         )}
       </div>

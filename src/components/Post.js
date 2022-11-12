@@ -86,6 +86,10 @@ function Post({ post, authUser }) {
     };
   }, [deleteRef]);
 
+  useEffect(() => {
+    setTitle(post.title);
+  }, [post]);
+
   const translateText = async () => {
     await axios
       .post(`https://libretranslate.de/detect`, {
@@ -361,33 +365,27 @@ function Post({ post, authUser }) {
                     className="p-3 space-y-6  border-b   text-center cursor-pointer"
                     onClick={() => {
                       setOptionModal(false);
+                      setEditModal(true);
                     }}
                   >
-                    <span
-                      onClick={() => {
-                        setEditModal(true);
-                      }}
-                      className="text-black text-sm font-normal leading-relaxed"
-                    >
+                    <span className="text-black text-sm font-normal leading-relaxed">
                       Edit
                     </span>
                   </div>
                 </>
               )}
 
-              <div
-                className="p-3 space-y-6   border-b  text-center cursor-pointer"
+              <Link
+                className="p-3 space-y-6   border-b  text-center cursor-pointer block"
+                to={`/${user.username}/${post.uid}`}
                 onClick={() => {
                   setOptionModal(false);
                 }}
               >
-                <Link
-                  to={`/${user.username}/${post.uid}`}
-                  className="text-black text-sm font-normal leading-relaxed"
-                >
+                <span className="text-black text-sm font-normal leading-relaxed">
                   Go to post
-                </Link>
-              </div>
+                </span>
+              </Link>
               <div
                 className="p-3 space-y-6   border-b  text-center cursor-pointer"
                 onClick={() => {
@@ -401,18 +399,13 @@ function Post({ post, authUser }) {
               </div>
               <div
                 className="p-3 space-y-6   border-b  text-center cursor-pointer"
-                onClick={() => {
+                onClick={(e) => {
+                  setCopyLink(e);
                   setOptionModal(false);
+                  toast.success("Link copied to clipboard.");
                 }}
               >
-                <span
-                  onClick={(e) => {
-                    setCopyLink(e);
-                    setOptionModal(false);
-                    toast.success("Link copied to clipboard.");
-                  }}
-                  className="text-black text-sm font-normal leading-relaxed"
-                >
+                <span className="text-black text-sm font-normal leading-relaxed">
                   Copy link
                 </span>
               </div>

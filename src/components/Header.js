@@ -36,11 +36,10 @@ function Header() {
           <Link to="/">
             <Icon name="home" className="h-6 cursor-pointer" size={22} />
           </Link>
-
-          <Icon name="direct" className="cursor-pointer" size={22} />
-          <div className="relative ">
-            <Icon name="heart" className="cursor-pointer" size={22} />
-          </div>
+          <Link to="/direct">
+            <Icon name="direct" className="cursor-pointer" size={22} />
+          </Link>
+          <Icon name="heart" className="cursor-pointer" size={22} />
           <Icon
             onClick={() => {
               setModal(true);

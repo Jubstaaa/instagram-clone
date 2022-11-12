@@ -3,7 +3,7 @@ import Home from "pages/home";
 import Login from "pages/auth/login";
 import Register from "pages/auth/register";
 import Password from "pages/auth/password";
-import Profile from "pages/profile";
+import Profile from "pages/profile/Components/Profile";
 import PrivateRoute from "components/PrivateRoute";
 import Layout from "pages/layout";
 import Posts from "pages/profile/posts";
@@ -14,6 +14,10 @@ import Edit from "pages/profile/Components/Edit";
 import ProfileNotFound from "pages/profile/not-found";
 import EditForm from "pages/profile/Components/EditForm";
 import ChangePassword from "pages/profile/Components/ChangePassword";
+import InboxLayout from "pages/inbox";
+import Inbox from "pages/inbox/inbox";
+import Chat from "pages/inbox/chat";
+
 const routes = [
   {
     path: "/",
@@ -43,6 +47,21 @@ const routes = [
           },
         ],
       },
+      {
+        path: "direct",
+        element: <InboxLayout />,
+        children: [
+          {
+            index: true,
+            element: <Inbox />,
+          },
+          {
+            path: ":conversationId",
+            element: <Chat />,
+          },
+        ],
+      },
+
       {
         path: "accounts",
         element: <EditProfile />,

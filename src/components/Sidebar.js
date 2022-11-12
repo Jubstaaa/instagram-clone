@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { people } from "./Data";
 import Suggestion from "./Suggestion";
 function Sidebar() {
   const user = useSelector((state) => state.auth.user);

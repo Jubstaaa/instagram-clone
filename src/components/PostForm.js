@@ -4,7 +4,15 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useState } from "react";
 import { addPost, editPost } from "firebaseConfig";
 
-function PostForm({ user, file, setModal, type, post }) {
+function PostForm({
+  user,
+  file,
+  setModal,
+  type,
+  post,
+  force = null,
+  setForce = null,
+}) {
   const [accesibility, setAccesibility] = useState(false);
   return (
     <Formik
@@ -19,6 +27,7 @@ function PostForm({ user, file, setModal, type, post }) {
       onSubmit={async (values) => {
         type === "edit" ? await editPost(values) : await addPost(values);
         setModal(false);
+        setForce(!force);
       }}
     >
       {({ values, handleSubmit, handleChange }) => (

@@ -5,8 +5,12 @@ import classNames from "classnames";
 import { getUsers } from "firebaseConfig";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { createMessage } from "firebaseConfig";
+import { useSelector } from "react-redux";
 
-function Search() {
+function Search({ className, type = null, setMessageModal = null }) {
+  const authUser = useSelector((state) => state.auth.user);
+
   const searchRef = useRef(null);
   const [searchValue, setSearchValue] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -43,7 +47,7 @@ function Search() {
     filterSearch();
   }, [searchValue]);
   return (
-    <div ref={searchRef} className="w-[268px] relative group">
+    <div ref={searchRef} className={`"w-[268px] relative group ${className}`}>
       <span
         className={classNames({
           "absolute text-[#8e8e8e] pointer-events-none top-0 left-0 h-9 w-9 flex items-center justify-center": true,
@@ -83,18 +87,23 @@ function Search() {
       {open && (
         <div
           id="dropdown"
-          class="w-full h-56 absolute inset-0 top-[36px] z-10 bg-white rounded divide-y divide-gray-100 shadow "
+          className="w-full h-56 absolute inset-0 top-[36px] z-10 bg-white rounded divide-y divide-gray-100 shadow "
         >
-          <ul class="py-1 text-sm text-black">
+          <ul className="py-1 text-sm text-black">
             {filteredUsers.map((user) => (
-              <li>
+              <li key={user.uid}>
                 <Link
                   onClick={() => {
-                    setOpen(false);
-                    setSearchValue("");
+                    if (type === "message") {
+                      createMessage(user, authUser);
+                      setMessageModal(false);
+                    } else {
+                      setOpen(false);
+                      setSearchValue("");
+                    }
                   }}
-                  to={`/${user.username}`}
-                  class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to={type === "message" ? `/direct/1` : `/${user.username}`}
+                  className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   <div className="flex items-center justify-start space-x-2 ">
                     <img

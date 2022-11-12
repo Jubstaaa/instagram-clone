@@ -5,7 +5,15 @@ import TimeAgo from "react-timeago";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { deleteComment } from "firebaseConfig";
 
-function Comment({ comment, post, authUser, userData, type = null }) {
+function Comment({
+  comment,
+  post,
+  authUser,
+  userData,
+  type = null,
+  setForce = null,
+  force = null,
+}) {
   const [user, setUser] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const modalRef = useRef(null);
@@ -87,6 +95,7 @@ function Comment({ comment, post, authUser, userData, type = null }) {
                 onClick={async () => {
                   await deleteComment(userData, post, comment.uid, authUser);
                   setDeleteModal(false);
+                  setForce(!force);
                 }}
                 className="p-3 space-y-6 border-b  text-center cursor-pointer"
               >

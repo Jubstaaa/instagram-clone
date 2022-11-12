@@ -17,7 +17,6 @@ function Feed() {
   useEffect(() => {
     getPosts();
   }, [authUser]);
-  console.log(posts);
 
   if (posts === null) {
     return <></>;

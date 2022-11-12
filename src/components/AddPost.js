@@ -5,7 +5,15 @@ import { uploadPhoto } from "firebaseConfig";
 import classNames from "classnames";
 import PostForm from "./PostForm";
 import { BsArrowLeft } from "react-icons/bs";
-function AddPost({ setModal, user, type = null, fileRef = null, post = null }) {
+function AddPost({
+  setModal,
+  user,
+  type = null,
+  fileRef = null,
+  post = null,
+  force = null,
+  setForce = null,
+}) {
   const modalRef = useRef(null);
   const discardModal = useRef(null);
   const [discard, setDiscard] = useState(false);
@@ -135,6 +143,8 @@ function AddPost({ setModal, user, type = null, fileRef = null, post = null }) {
                     setModal={setModal}
                     type={type}
                     post={post}
+                    force={force}
+                    setForce={setForce}
                   />
                 </div>
               </>
@@ -158,23 +168,23 @@ function AddPost({ setModal, user, type = null, fileRef = null, post = null }) {
                 </p>
               </div>
 
-              <div className="p-3 space-y-6 border-b  text-center cursor-pointer">
-                <span
-                  onClick={() => {
-                    setModal(false);
-                  }}
-                  className="text-[#ed4956] text-sm font-bold leading-relaxed"
-                >
+              <div
+                onClick={() => {
+                  setModal(false);
+                }}
+                className="p-3 space-y-6 border-b  text-center cursor-pointer"
+              >
+                <span className="text-[#ed4956] text-sm font-bold leading-relaxed">
                   Discard
                 </span>
               </div>
-              <div className="p-3 space-y-6   text-center cursor-pointer">
-                <span
-                  onClick={() => {
-                    setDiscard(false);
-                  }}
-                  className="text-black text-sm font-normal leading-relaxed"
-                >
+              <div
+                onClick={() => {
+                  setDiscard(false);
+                }}
+                className="p-3 space-y-6   text-center cursor-pointer"
+              >
+                <span className="text-black text-sm font-normal leading-relaxed">
                   Cancel
                 </span>
               </div>

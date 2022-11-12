@@ -33,11 +33,22 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
+import {
+  getDatabase,
+  ref as refrtdb,
+  set,
+  child,
+  get,
+  push,
+  update,
+} from "firebase/database";
+
 import { v4 as uuidv4 } from "uuid";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
   storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
@@ -49,6 +60,7 @@ const auth = getAuth();
 const storage = getStorage(app);
 const user = auth.currentUser;
 export const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -432,9 +444,8 @@ export const addPost = async ({ title, alt, location, file, user }) => {
 
 export const deletePost = async (userData, post, authUser) => {
   delete post.user;
-
   const loading = toast.loading();
-
+  post = await getPostInfo(userData.username, post.uid);
   try {
     await updateDoc(doc(db, "users", userData.uid), {
       posts: arrayRemove({
@@ -452,6 +463,7 @@ export const editPost = async ({ title, alt, location, file, user, post }) => {
   delete post.user;
 
   const loading = toast.loading();
+  post = await getPostInfo(user.username, post.uid);
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -480,6 +492,7 @@ export const editPost = async ({ title, alt, location, file, user, post }) => {
 export const addComment = async (comment, user, post, authUser) => {
   delete post.user;
   const loading = toast.loading("Comment is uploading");
+  post = await getPostInfo(user.username, post.uid);
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -509,6 +522,7 @@ export const addComment = async (comment, user, post, authUser) => {
 
 export const deleteComment = async (user, post, commentId, authUser) => {
   delete post.user;
+  post = await getPostInfo(user.username, post.uid);
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -534,6 +548,7 @@ export const deleteComment = async (user, post, commentId, authUser) => {
 
 export const addLikes = async (user, post, authUser) => {
   delete post.user;
+  post = await getPostInfo(user.username, post.uid);
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -559,6 +574,7 @@ export const addLikes = async (user, post, authUser) => {
 
 export const removeLikes = async (user, post, authUser) => {
   delete post.user;
+  post = await getPostInfo(user.username, post.uid);
   try {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayRemove({
@@ -588,4 +604,44 @@ export const getFeed = async (following, myPosts) => {
     });
   }
   return posts;
+};
+
+export const createMessage = (user, authUser) => {
+  set(refrtdb(rtdb, `${uuidv4()}/users`), {
+    uid: user.uid,
+    uid2: authUser.uid,
+  });
+};
+
+export const checkReceiverUser = (conversationId, authUser, setReceiver) => {
+  const dbRef = refrtdb(getDatabase());
+  get(child(dbRef, `${conversationId}/users`))
+    .then(async (snapshot) => {
+      if (snapshot.exists()) {
+        setReceiver(
+          await getFriendInfo(
+            snapshot.val().uid === authUser.uid
+              ? snapshot.val().uid2
+              : snapshot.val().uid
+          )
+        );
+      } else {
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+export const sendMessage = (authUser, message, conversationId) => {
+  const msg = {
+    author: authUser.uid,
+    message,
+  };
+  const msgKey = push(child(refrtdb(rtdb), conversationId)).key;
+
+  const updates = {};
+  updates[`/${conversationId}/` + msgKey] = msg;
+  return update(refrtdb(rtdb), updates);
 };
