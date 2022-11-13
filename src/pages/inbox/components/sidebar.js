@@ -21,7 +21,7 @@ export default function Sidebar({ setMessageModal }) {
           size={24}
         />
       </header>
-      <ChatList />
+      <ChatList user={user} />
     </aside>
   );
 }

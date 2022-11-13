@@ -41,6 +41,7 @@ import {
   get,
   push,
   update,
+  onValue,
 } from "firebase/database";
 
 import { v4 as uuidv4 } from "uuid";
@@ -606,11 +607,52 @@ export const getFeed = async (following, myPosts) => {
   return posts;
 };
 
-export const createMessage = (user, authUser) => {
-  set(refrtdb(rtdb, `${uuidv4()}/users`), {
+export const createMessage = async (user, authUser) => {
+  const uid = uuidv4();
+  set(refrtdb(rtdb, `${uid}/users`), {
     uid: user.uid,
     uid2: authUser.uid,
   });
+
+  try {
+    await updateDoc(doc(db, "users", authUser.uid), {
+      messages: arrayUnion({
+        uid,
+        receiver: user.uid,
+      }),
+    });
+    await updateDoc(doc(db, "users", user.uid), {
+      messages: arrayUnion({
+        uid,
+        receiver: authUser.uid,
+      }),
+    });
+    updateRedux(authUser);
+    return uid;
+  } catch (e) {
+    toast.error(e.code);
+  }
+};
+
+export const checkSenderUser = (conversationId, authUser, setSender) => {
+  const dbRef = refrtdb(getDatabase());
+  get(child(dbRef, `${conversationId}/users`))
+    .then(async (snapshot) => {
+      if (snapshot.exists()) {
+        setSender(
+          await getFriendInfo(
+            snapshot.val().uid === authUser.uid
+              ? snapshot.val().uid
+              : snapshot.val().uid2 === authUser.uid && snapshot.val().uid2
+          )
+        );
+      } else {
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 
 export const checkReceiverUser = (conversationId, authUser, setReceiver) => {
@@ -638,10 +680,54 @@ export const sendMessage = (authUser, message, conversationId) => {
   const msg = {
     author: authUser.uid,
     message,
+    date: new Date().getTime(),
   };
   const msgKey = push(child(refrtdb(rtdb), conversationId)).key;
 
   const updates = {};
   updates[`/${conversationId}/` + msgKey] = msg;
   return update(refrtdb(rtdb), updates);
+};
+
+export const getMessages = (conversationId, setMessages) => {
+  const messagesRef = refrtdb(rtdb, conversationId);
+  onValue(messagesRef, (snapshot) => {
+    let messages = [];
+
+    snapshot.forEach((message) => {
+      messages.push({
+        id: message.key,
+        ...message.val(),
+      });
+    });
+    messages.pop();
+    setMessages(messages);
+  });
+};
+
+export const getLastMessage = (conversationId, setLastMessage) => {
+  const messagesRef = refrtdb(rtdb, conversationId);
+  onValue(messagesRef, (snapshot) => {
+    setLastMessage(
+      Object.values(snapshot.val())[Object.values(snapshot.val()).length - 2]
+    );
+  });
+};
+
+export const getChatList = async (user) => {
+  return (await getDoc(doc(db, "users", user.uid))).data().messages;
+};
+
+export const checkChatExist = async (authUser, user, navigate) => {
+  let conversationId = null;
+
+  const checkExist = await authUser.messages.find(
+    (message) => message.receiver === user.uid
+  );
+  if (checkExist) {
+    conversationId = checkExist.uid;
+  } else {
+    conversationId = await createMessage(user, authUser);
+  }
+  navigate(`/direct/${conversationId}`);
 };

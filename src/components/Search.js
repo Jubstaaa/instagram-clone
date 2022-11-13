@@ -5,12 +5,12 @@ import classNames from "classnames";
 import { getUsers } from "firebaseConfig";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { createMessage } from "firebaseConfig";
+import { checkChatExist } from "firebaseConfig";
 import { useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 function Search({ className, type = null, setMessageModal = null }) {
   const authUser = useSelector((state) => state.auth.user);
-
+  let navigate = useNavigate();
   const searchRef = useRef(null);
   const [searchValue, setSearchValue] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -93,17 +93,18 @@ function Search({ className, type = null, setMessageModal = null }) {
             {filteredUsers.map((user) => (
               <li key={user.uid}>
                 <Link
-                  onClick={() => {
+                  onClick={async () => {
                     if (type === "message") {
-                      createMessage(user, authUser);
+                      await checkChatExist(authUser, user, navigate);
                       setMessageModal(false);
                     } else {
+                      navigate(`/${user.username}`);
                       setOpen(false);
                       setSearchValue("");
                     }
                   }}
-                  to={type === "message" ? `/direct/1` : `/${user.username}`}
                   className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  to={`/${user.username}`}
                 >
                   <div className="flex items-center justify-start space-x-2 ">
                     <img

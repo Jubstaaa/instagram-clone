@@ -1,12 +1,18 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, NavLink, Outlet, Link } from "react-router-dom";
+import {
+  useParams,
+  NavLink,
+  Outlet,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
 import Icon from "components/Icon";
 import Loader from "components/Loader";
 import ProfileNotFound from "../not-found";
-import { getUserInfo, follow, unfollow } from "firebaseConfig";
+import { getUserInfo, follow, unfollow, checkChatExist } from "firebaseConfig";
 import Button from "components/Button";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Following from "./Following";
@@ -14,6 +20,7 @@ import Follower from "./Follower";
 import NoPeople from "./NoPeople";
 
 function Profile() {
+  const navigate = useNavigate();
   const authUser = useSelector((state) => state.auth.user);
   const [userData, setUserData] = useState(null);
   const { user } = useParams();
@@ -94,6 +101,9 @@ function Profile() {
                 ) : authUser.following.find((el) => el.uid === userData.uid) ? (
                   <>
                     <a
+                      onClick={() => {
+                        checkChatExist(authUser, userData, navigate);
+                      }}
                       className="text-black border border-[#dbdbdb] font-semibold  px-2 py-1 rounded  text-sm cursor-pointer "
                       type="button"
                     >
@@ -209,7 +219,7 @@ function Profile() {
             POSTS
           </NavLink>
           <NavLink
-            to={`/${userData.username}/tagged`}
+            to={`/${userData.username}/saved`}
             end={true}
             className={({ isActive }) =>
               classNames({
@@ -219,8 +229,8 @@ function Profile() {
               })
             }
           >
-            <Icon name="tag" size={12} />
-            TAGGED
+            <Icon name="saved" size={12} />
+            SAVED
           </NavLink>
         </nav>
         <Outlet context={[userData]} />

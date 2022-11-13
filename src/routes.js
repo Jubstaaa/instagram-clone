@@ -9,7 +9,7 @@ import Layout from "pages/layout";
 import Posts from "pages/profile/posts";
 import PostDetails from "pages/profile/postDetails";
 import EditProfile from "pages/profile/edit";
-import Tagged from "pages/profile/tagged";
+import Saved from "pages/profile/saved";
 import Edit from "pages/profile/Components/Edit";
 import ProfileNotFound from "pages/profile/not-found";
 import EditForm from "pages/profile/Components/EditForm";
@@ -42,8 +42,8 @@ const routes = [
             element: <Posts />,
           },
           {
-            path: "tagged",
-            element: <Tagged />,
+            path: "saved",
+            element: <Saved />,
           },
         ],
       },
