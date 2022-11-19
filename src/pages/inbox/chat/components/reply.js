@@ -11,7 +11,7 @@ export default function Reply({
 
   const onSubmit = (e) => {
     e.preventDefault();
-    sendMessage(authUser, message, conversationId);
+    sendMessage(authUser, message, conversationId, receiver);
     setMessage("");
   };
 

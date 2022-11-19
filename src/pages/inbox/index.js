@@ -1,13 +1,17 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import Sidebar from "pages/inbox/components/sidebar";
 import { useState, useEffect, useRef } from "react";
 import Icon from "components/Icon";
 import Search from "components/Search";
-
+import { getMessages } from "firebaseConfig";
 export default function InboxLayout() {
   const [messageModal, setMessageModal] = useState(false);
   const messageModalRef = useRef(null);
-
+  const { conversationId } = useParams();
+  const [messages, setMessages] = useState([]);
+  useEffect(() => {
+    getMessages(conversationId, setMessages);
+  }, [conversationId]);
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -25,8 +29,8 @@ export default function InboxLayout() {
 
   return (
     <div className="border border-gray-300 rounded bg-white h-[calc(100vh-97px)] flex">
-      <Sidebar setMessageModal={setMessageModal} />
-      <Outlet context={[setMessageModal]} />
+      <Sidebar setMessageModal={setMessageModal} messages={messages} />
+      <Outlet context={[setMessageModal, messages, setMessages]} />
 
       {messageModal && (
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">

@@ -2,7 +2,7 @@ import Icon from "components/Icon";
 import { useSelector } from "react-redux";
 import ChatList from "pages/inbox/components/chatlist";
 
-export default function Sidebar({ setMessageModal }) {
+export default function Sidebar({ setMessageModal, messages }) {
   const user = useSelector((state) => state.auth.user);
 
   return (
@@ -21,7 +21,7 @@ export default function Sidebar({ setMessageModal }) {
           size={24}
         />
       </header>
-      <ChatList user={user} />
+      <ChatList user={user} messages={messages} />
     </aside>
   );
 }

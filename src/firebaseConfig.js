@@ -42,6 +42,7 @@ import {
   push,
   update,
   onValue,
+  onDisconnect,
 } from "firebase/database";
 
 import { v4 as uuidv4 } from "uuid";
@@ -73,6 +74,12 @@ onAuthStateChanged(auth, async (user) => {
       ...userData.data(),
     };
     userHandle(data);
+    set(refrtdb(rtdb, "status/" + user.uid), {
+      status: "online",
+    });
+
+    const objRef = refrtdb(rtdb, `status/${user.uid}`);
+    onDisconnect(objRef).remove();
   } else {
     userHandle(false);
   }
@@ -676,7 +683,12 @@ export const checkReceiverUser = (conversationId, authUser, setReceiver) => {
     });
 };
 
-export const sendMessage = (authUser, message, conversationId) => {
+export const sendMessage = async (
+  authUser,
+  message,
+  conversationId,
+  receiver
+) => {
   const msg = {
     author: authUser.uid,
     message,
@@ -686,6 +698,7 @@ export const sendMessage = (authUser, message, conversationId) => {
 
   const updates = {};
   updates[`/${conversationId}/` + msgKey] = msg;
+
   return update(refrtdb(rtdb), updates);
 };
 
@@ -705,13 +718,13 @@ export const getMessages = (conversationId, setMessages) => {
   });
 };
 
-export const getLastMessage = (conversationId, setLastMessage) => {
+export const getLastMessage = async (conversationId) => {
   const messagesRef = refrtdb(rtdb, conversationId);
-  onValue(messagesRef, (snapshot) => {
-    setLastMessage(
-      Object.values(snapshot.val())[Object.values(snapshot.val()).length - 2]
-    );
-  });
+  const snapshot = await get(messagesRef);
+
+  return Object.values(snapshot.val())[
+    Object.values(snapshot.val()).length - 2
+  ];
 };
 
 export const getChatList = async (user) => {
@@ -721,7 +734,7 @@ export const getChatList = async (user) => {
 export const checkChatExist = async (authUser, user, navigate) => {
   let conversationId = null;
 
-  const checkExist = await authUser.messages.find(
+  const checkExist = await authUser?.messages?.find(
     (message) => message.receiver === user.uid
   );
   if (checkExist) {
@@ -730,4 +743,11 @@ export const checkChatExist = async (authUser, user, navigate) => {
     conversationId = await createMessage(user, authUser);
   }
   navigate(`/direct/${conversationId}`);
+};
+
+export const getStatus = (user, setUser) => {
+  const messagesRef = refrtdb(rtdb, `status/${user.uid}`);
+  onValue(messagesRef, (snapshot) => {
+    setUser({ ...user, status: snapshot?.val()?.status });
+  });
 };

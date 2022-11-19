@@ -10,17 +10,18 @@ import {
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Inbox from "../inbox";
+import { useOutletContext } from "react-router-dom";
+
 export default function Chat() {
   const authUser = useSelector((state) => state.auth.user);
   const { conversationId } = useParams();
   const [sender, setSender] = useState(null);
   const [receiver, setReceiver] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [, messages, setMessages] = useOutletContext();
 
   useEffect(() => {
     checkSenderUser(conversationId, authUser, setSender);
     checkReceiverUser(conversationId, authUser, setReceiver);
-    getMessages(conversationId, setMessages);
   }, [conversationId]);
 
   if (!sender) {

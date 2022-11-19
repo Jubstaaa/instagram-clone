@@ -2,7 +2,7 @@ import Icon from "components/Icon";
 import { useOutletContext } from "react-router-dom";
 
 export default function Inbox() {
-  const [setMessageModal] = useOutletContext();
+  const [setMessageModal, messages, setMessages] = useOutletContext();
 
   return (
     <div className="w-full h-full flex items-center gap-y-1 justify-center flex-col">

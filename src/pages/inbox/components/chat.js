@@ -1,17 +1,17 @@
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import { useState, useEffect } from "react";
-import { getFriendInfo, getLastMessage } from "firebaseConfig";
+import { getFriendInfo, getStatus } from "firebaseConfig";
 import TimeAgo from "react-timeago";
 
-function Chat({ chat, conversationId }) {
+function Chat({ chat, conversationId, lastMessage }) {
   const [user, setUser] = useState(null);
-  const [lastMessage, setLastMessage] = useState(null);
   useEffect(() => {
     getFriendInfo(chat.receiver)
-      .then((res) => setUser(res))
+      .then(async (res) => {
+        getStatus(res, setUser);
+      })
       .catch((err) => console.log(err));
-    getLastMessage(chat.uid, setLastMessage);
   }, []);
 
   if (!user) {
@@ -38,7 +38,9 @@ function Chat({ chat, conversationId }) {
           className="w-14 h-14 rounded-full object-cover"
           alt=""
         />
-        <div className="border-[3.5px] border-white h-5 w-5 ml-[3px] mt-[3px] bg-green-400 rounded-full absolute bottom-0 right-0"></div>
+        {user.status && (
+          <div className="border-[3.5px] border-white h-5 w-5 ml-[3px] mt-[3px] bg-green-400 rounded-full absolute bottom-0 right-0"></div>
+        )}
       </div>
       <div className="w-full">
         <h6 className="text-sm">{user.username}</h6>

@@ -87,37 +87,57 @@ function Search({ className, type = null, setMessageModal = null }) {
       {open && (
         <div
           id="dropdown"
-          className="w-full h-56 absolute inset-0 top-[36px] z-10 bg-white rounded divide-y divide-gray-100 shadow "
+          className="w-full h-56 absolute inset-0 top-[36px] z-10 bg-white rounded divide-y divide-gray-100 shadow  overflow-auto "
         >
           <ul className="py-1 text-sm text-black">
             {filteredUsers.map((user) => (
               <li key={user.uid}>
-                <Link
-                  onClick={async () => {
-                    if (type === "message") {
+                {type === "message" ? (
+                  <Link
+                    onClick={async () => {
                       await checkChatExist(authUser, user, navigate);
                       setMessageModal(false);
-                    } else {
-                      navigate(`/${user.username}`);
+                    }}
+                    className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <div className="flex items-center justify-start space-x-2 ">
+                      <img
+                        className="h-11 w-11 inline-block rounded-full "
+                        src={user.photoURL || "/img/no-avatar.jpeg"}
+                        alt=""
+                      />
+                      <div className="flex flex-col items-start justify-center">
+                        <span className="font-semibold">{user.username}</span>
+                        <span className="text-[#8e8e8e]">
+                          {user.displayName}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ) : (
+                  <Link
+                    onClick={async () => {
                       setOpen(false);
                       setSearchValue("");
-                    }
-                  }}
-                  className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  to={`/${user.username}`}
-                >
-                  <div className="flex items-center justify-start space-x-2 ">
-                    <img
-                      className="h-11 w-11 inline-block rounded-full "
-                      src={user.photoURL || "/img/no-avatar.jpeg"}
-                      alt=""
-                    />
-                    <div className="flex flex-col items-start justify-center">
-                      <span className="font-semibold">{user.username}</span>
-                      <span className="text-[#8e8e8e]">{user.displayName}</span>
+                    }}
+                    className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    to={`/${user.username}`}
+                  >
+                    <div className="flex items-center justify-start space-x-2 ">
+                      <img
+                        className="h-11 w-11 inline-block rounded-full "
+                        src={user.photoURL || "/img/no-avatar.jpeg"}
+                        alt=""
+                      />
+                      <div className="flex flex-col items-start justify-center">
+                        <span className="font-semibold">{user.username}</span>
+                        <span className="text-[#8e8e8e]">
+                          {user.displayName}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

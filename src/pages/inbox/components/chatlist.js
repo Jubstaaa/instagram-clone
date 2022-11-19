@@ -1,18 +1,28 @@
 import { NavLink, useParams } from "react-router-dom";
 import classNames from "classnames";
 import { useState, useEffect } from "react";
-import { getChatList } from "firebaseConfig";
+import { getChatList, getLastMessage } from "firebaseConfig";
 import Chat from "./chat";
 
-export default function ChatList({ user }) {
-  const [chats, setChats] = useState(null);
+export default function ChatList({ user, messages }) {
+  const [chats, setChats] = useState([]);
   const { conversationId } = useParams();
+
+  const test = async (res) => {
+    const newArray = [];
+    for (let chat of res) {
+      newArray.push({ ...chat, lastMessage: await getLastMessage(chat.uid) });
+    }
+    setChats(newArray);
+  };
 
   useEffect(() => {
     getChatList(user)
-      .then((res) => setChats(res))
+      .then((res) => {
+        test(res);
+      })
       .catch((err) => console.log(err));
-  }, []);
+  }, [messages]);
 
   return (
     <div className="h-[calc(100%-60px)] overflow-auto py-3">
@@ -22,9 +32,16 @@ export default function ChatList({ user }) {
           16 requests
         </button> */}
       </header>
-      {chats?.map((chat) => (
-        <Chat key={chat.uid} chat={chat} conversationId={conversationId} />
-      ))}
+      {chats
+        ?.sort((a, b) => b?.lastMessage?.date - a?.lastMessage?.date)
+        .map((chat, i) => (
+          <Chat
+            key={chat.uid}
+            chat={chat}
+            conversationId={conversationId}
+            lastMessage={chat.lastMessage}
+          />
+        ))}
     </div>
   );
 }
