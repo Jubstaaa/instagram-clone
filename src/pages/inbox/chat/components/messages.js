@@ -1,12 +1,20 @@
 import Message from "./message";
 import { useEffect, useRef } from "react";
-export default function Messages({ messages, receiver, authUser }) {
+import { seenMessage } from "firebaseConfig";
+export default function Messages({
+  messages,
+  receiver,
+  authUser,
+  conversationId,
+}) {
   const chatRef = useRef(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    });
+    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    seenMessage(
+      messages.filter((message) => message.author !== authUser.uid).at(-1),
+      conversationId
+    );
   }, [messages]);
 
   return (
@@ -22,6 +30,7 @@ export default function Messages({ messages, receiver, authUser }) {
           key={message.id}
           receiver={receiver}
           authUser={authUser}
+          chatRef={chatRef}
         />
       ))}
     </main>

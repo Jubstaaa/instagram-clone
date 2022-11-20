@@ -1,8 +1,10 @@
 import { Formik, Form } from "formik";
 import Icon from "./Icon";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { addPost, editPost } from "firebaseConfig";
+import EmojiPicker from "emoji-picker-react";
+import { json } from "react-router-dom";
 
 function PostForm({
   user,
@@ -14,6 +16,21 @@ function PostForm({
   setForce = null,
 }) {
   const [accesibility, setAccesibility] = useState(false);
+  const [emojiPicker, setEmojiPicker] = useState(false);
+  const emojiRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setEmojiPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiRef]);
+
   return (
     <Formik
       initialValues={{
@@ -30,7 +47,7 @@ function PostForm({
         setForce(!force);
       }}
     >
-      {({ values, handleSubmit, handleChange }) => (
+      {({ values, handleSubmit, handleChange, setFieldValue }) => (
         <Form
           onSubmit={handleSubmit}
           className="flex flex-col justify-start items-center w-full max-h-full  overflow-y-auto"
@@ -57,13 +74,31 @@ function PostForm({
                 value={values.title}
               />
             </div>
-            <div className="flex justify-between items-center p-2">
+            <div className="flex justify-between items-center p-2 relative">
               <Icon
                 className="cursor-pointer"
+                onClick={() => {
+                  setEmojiPicker(true);
+                }}
                 name="emoji"
                 size={20}
                 fill="#8e8e8e"
               />
+              {emojiPicker && (
+                <div ref={emojiRef} className="absolute inset-0 top-full">
+                  <EmojiPicker
+                    onEmojiClick={(emojiData, event) => {
+                      setFieldValue("title", values.title + emojiData.emoji);
+                    }}
+                    height="20rem"
+                    width="100%"
+                    autoFocusSearch={true}
+                    previewConfig={{
+                      showPreview: false,
+                    }}
+                  />
+                </div>
+              )}
               <p className="text-sm text-[#8e8e8e]">
                 {values.title.length}/2,200
               </p>

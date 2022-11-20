@@ -35,7 +35,12 @@ export default function Chat() {
   return (
     <div className="flex-1">
       <Header user={receiver} />
-      <Messages messages={messages} receiver={receiver} authUser={authUser} />
+      <Messages
+        messages={messages}
+        receiver={receiver}
+        authUser={authUser}
+        conversationId={conversationId}
+      />
       <Reply
         setMessages={setMessages}
         conversationId={conversationId}

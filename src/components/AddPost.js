@@ -93,7 +93,12 @@ function AddPost({
               {type === "edit" ? "Edit info " : "Create new post"}
             </span>
           </div>
-          <div className="min-h-[356px] h-[356px] flex items-center justify-between relative">
+          <div
+            className={classNames({
+              "min-h-[356px] h-[356px] flex items-center justify-between  ": true,
+              relative: !file,
+            })}
+          >
             {!file && (
               <FileUploader
                 disabled={disable}

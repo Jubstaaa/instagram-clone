@@ -1,7 +1,37 @@
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+import FsLightbox from "fslightbox-react";
+import { useState } from "react";
+import Icon from "components/Icon";
+import DirectPost from "./directPost";
 
-export default function Message({ message, receiver, authUser }) {
+export default function Message({ message, receiver, authUser, chatRef }) {
+  const [toggler, setToggler] = useState(false);
+
+  const checkLinks = (string) => {
+    const textArray = string?.split(" ");
+    const result = textArray?.map((text, i) => {
+      let url;
+      try {
+        url = new URL(text);
+      } catch (_) {
+        return text + " ";
+      }
+
+      return (
+        <a
+          key={i}
+          href={text}
+          target="_blank"
+          className="contents text-[#00376B] hover:underline"
+        >
+          {text + " "}
+        </a>
+      );
+    });
+    return result;
+  };
+
   return (
     <div
       className={classNames({
@@ -21,16 +51,35 @@ export default function Message({ message, receiver, authUser }) {
           />
         </Link>
       )}
-      <p
-        style={{ hyphens: "auto" }}
-        className={classNames({
-          "break-all min-h-[44px] inline-flex items-center py-3 px-4 text-sm rounded-3xl": true,
-          "border border-gray-200": authUser.uid !== message.author,
-          "bg-[#efefef]": authUser.uid === message.author,
-        })}
-      >
-        {message.message}
-      </p>
+      {message?.image ? (
+        <>
+          <img
+            className="cursor-pointer"
+            onClick={() => setToggler(!toggler)}
+            src={message.image}
+          />
+          <FsLightbox
+            toggler={toggler}
+            sources={[<img src={message.image} />]}
+          />
+        </>
+      ) : message.message === "❤️" ? (
+        <Icon name="redHeart" size={44} />
+      ) : message?.post ? (
+        <DirectPost post={message.post} chatRef={chatRef} />
+      ) : (
+        <p
+          style={{ hyphens: "auto" }}
+          className={classNames({
+            "break-all min-h-[44px] items-center py-3 px-4 text-sm rounded-3xl": true,
+            "border border-gray-200": authUser.uid !== message.author,
+            "bg-[#efefef]": authUser.uid === message.author,
+          })}
+        >
+          {checkLinks(message.message)}
+        </p>
+      )}
+      <></>
     </div>
   );
 }

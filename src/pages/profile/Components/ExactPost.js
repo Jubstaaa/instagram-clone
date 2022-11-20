@@ -16,6 +16,8 @@ import {
   EmailShareButton,
 } from "react-share";
 import AddPost from "components/AddPost";
+import EmojiPicker from "emoji-picker-react";
+import Search from "components/Search";
 
 function ExactPost({
   post,
@@ -40,6 +42,38 @@ function ExactPost({
   const [copyLink, setCopyLink] = useClipboard(
     `${window.location.origin}/${userData.username}/${post.uid}`
   );
+  const [emojiPicker, setEmojiPicker] = useState(false);
+  const emojiRef = useRef(null);
+  const [directModal, setDirectModal] = useState(false);
+  const directModalRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        directModalRef.current &&
+        !directModalRef.current.contains(event.target)
+      ) {
+        setDirectModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [directModalRef]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setEmojiPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiRef]);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -246,6 +280,9 @@ function ExactPost({
                           }}
                         />
                         <Icon
+                          onClick={() => {
+                            setDirectModal(true);
+                          }}
                           className="cursor-pointer hover:opacity-50"
                           name="share"
                           size={24}
@@ -296,9 +333,30 @@ function ExactPost({
                     </p>
                   </div>
                 </div>
-                <div className="col-span-5 w-full flex justify-between items-center p-3">
-                  <Icon className="mr-2" name="emoji" fill="black" size={23} />
-
+                <div className="col-span-5 w-full flex justify-between items-center p-3 relative">
+                  <Icon
+                    onClick={() => {
+                      setEmojiPicker(true);
+                    }}
+                    className="mr-2 cursor-pointer"
+                    name="emoji"
+                    fill="black"
+                    size={23}
+                  />
+                  {emojiPicker && (
+                    <div ref={emojiRef} className="absolute bottom-full left-0">
+                      <EmojiPicker
+                        onEmojiClick={(emojiData, event) => {
+                          setComment(comment + emojiData.emoji);
+                        }}
+                        height={400}
+                        autoFocusSearch={true}
+                        previewConfig={{
+                          showPreview: false,
+                        }}
+                      />
+                    </div>
+                  )}
                   <input
                     ref={commentRef}
                     className="w-full border-[1px] border-none  focus:outline-none p-2 resize-none"
@@ -335,6 +393,7 @@ function ExactPost({
               <div className="bg-white rounded-lg shadow relative ">
                 <div className="p-3  border-b  text-center  flex justify-between items-center">
                   <div></div>
+
                   <span className="  font-semibold leading-relaxed">
                     Following
                   </span>
@@ -506,7 +565,12 @@ function ExactPost({
                   </div>
                 </div>
 
-                <div className="flex justify-start items-center p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50">
+                <div
+                  onClick={() => {
+                    setDirectModal(true);
+                  }}
+                  className="flex justify-start items-center p-3 space-x-3 text-center cursor-pointer rounded-lg hover:bg-zinc-50"
+                >
                   <Icon name="share" size={24} />
                   <span className="text-black text-sm font-semibold leading-relaxed">
                     Share to Direct
@@ -595,6 +659,51 @@ function ExactPost({
             force={force}
             setForce={setForce}
           />
+        )}
+        {directModal && (
+          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+            <div
+              ref={directModalRef}
+              className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "
+            >
+              <div className="bg-white rounded-lg shadow relative ">
+                <div className="p-3 text-center  flex justify-between items-center">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setDirectModal(false);
+                    }}
+                  >
+                    <Icon name="close" size={18} />
+                  </div>
+
+                  <span className="  font-semibold leading-relaxed">
+                    New message
+                  </span>
+                  <button
+                    //   disabled={!comment}
+                    className=" text-brand disabled:opacity-60 "
+                    //   onClick={async () => {
+                    //     await addComment(comment, userData, post, authUser);
+                    //     setComment("");
+                    //     setForce(!force);
+                    //   }}
+                  >
+                    Next
+                  </button>
+                </div>
+                <div className="flex justify-center items-center">
+                  <Search
+                    className="w-full"
+                    type="direct"
+                    setMessageModal={setDirectModal}
+                    post={post}
+                    userData={userData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </>

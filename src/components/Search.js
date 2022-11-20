@@ -2,13 +2,19 @@ import Icon from "./Icon";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { useState } from "react";
 import classNames from "classnames";
-import { getUsers } from "firebaseConfig";
+import { getUsers, sendPost } from "firebaseConfig";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { checkChatExist } from "firebaseConfig";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-function Search({ className, type = null, setMessageModal = null }) {
+function Search({
+  className,
+  type = null,
+  setMessageModal = null,
+  post = null,
+  userData = null,
+}) {
   const authUser = useSelector((state) => state.auth.user);
   let navigate = useNavigate();
   const searchRef = useRef(null);
@@ -102,7 +108,38 @@ function Search({ className, type = null, setMessageModal = null }) {
                   >
                     <div className="flex items-center justify-start space-x-2 ">
                       <img
-                        className="h-11 w-11 inline-block rounded-full "
+                        className="h-11 w-11 inline-block rounded-full object-cover "
+                        src={user.photoURL || "/img/no-avatar.jpeg"}
+                        alt=""
+                      />
+                      <div className="flex flex-col items-start justify-center">
+                        <span className="font-semibold">{user.username}</span>
+                        <span className="text-[#8e8e8e]">
+                          {user.displayName}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ) : type === "direct" ? (
+                  <Link
+                    onClick={async () => {
+                      const conversationId = await checkChatExist(
+                        authUser,
+                        user
+                      );
+                      sendPost(
+                        authUser,
+                        (post = { ...post, username: userData.username }),
+                        userData,
+                        conversationId
+                      );
+                      setMessageModal(false);
+                    }}
+                    className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    <div className="flex items-center justify-start space-x-2 ">
+                      <img
+                        className="h-11 w-11 inline-block rounded-full object-cover "
                         src={user.photoURL || "/img/no-avatar.jpeg"}
                         alt=""
                       />
@@ -125,7 +162,7 @@ function Search({ className, type = null, setMessageModal = null }) {
                   >
                     <div className="flex items-center justify-start space-x-2 ">
                       <img
-                        className="h-11 w-11 inline-block rounded-full "
+                        className="h-11 w-11 inline-block rounded-full object-cover "
                         src={user.photoURL || "/img/no-avatar.jpeg"}
                         alt=""
                       />

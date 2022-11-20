@@ -693,6 +693,7 @@ export const sendMessage = async (
     author: authUser.uid,
     message,
     date: new Date().getTime(),
+    unread: true,
   };
   const msgKey = push(child(refrtdb(rtdb), conversationId)).key;
 
@@ -702,20 +703,89 @@ export const sendMessage = async (
   return update(refrtdb(rtdb), updates);
 };
 
-export const getMessages = (conversationId, setMessages) => {
-  const messagesRef = refrtdb(rtdb, conversationId);
-  onValue(messagesRef, (snapshot) => {
-    let messages = [];
+export const sendPost = async (authUser, post, userData, conversationId) => {
+  const msg = {
+    author: authUser.uid,
+    message: "Sent you a post",
+    post,
+    date: new Date().getTime(),
+    unread: true,
+  };
+  const msgKey = push(child(refrtdb(rtdb), conversationId)).key;
 
-    snapshot.forEach((message) => {
-      messages.push({
-        id: message.key,
-        ...message.val(),
+  const updates = {};
+  updates[`/${conversationId}/` + msgKey] = msg;
+  toast.success("Send");
+
+  return update(refrtdb(rtdb), updates);
+};
+
+export const sendPhoto = async (file, authUser, conversationId) => {
+  const msg = {
+    author: authUser.uid,
+    message: "Sent you a photo",
+    image: "",
+    date: new Date().getTime(),
+    unread: true,
+  };
+
+  const loading = toast.loading("File is uploading");
+  if (!file) {
+    return;
+  } else if (!file.type.includes("image")) {
+    return toast.error("Unsupported file type", { id: loading });
+  } else if (file.size > 2097152) {
+    return toast.error("File is too big!", { id: loading });
+  } else {
+    try {
+      const storageRef = ref(
+        storage,
+        `gs://instagram-clone-f9b98.appspot.com/${file.name}`
+      );
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (err) => {
+          toast.error(err);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            msg.image = downloadURL;
+            toast.success("File is uploaded", {
+              id: loading,
+            });
+            const msgKey = push(child(refrtdb(rtdb), conversationId)).key;
+
+            const updates = {};
+            updates[`/${conversationId}/` + msgKey] = msg;
+
+            return update(refrtdb(rtdb), updates);
+          });
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+export const getMessages = (conversationId, setMessages) => {
+  if (conversationId) {
+    const messagesRef = refrtdb(rtdb, conversationId);
+    onValue(messagesRef, (snapshot) => {
+      let messages = [];
+
+      snapshot.forEach((message) => {
+        messages.push({
+          id: message.key,
+          ...message.val(),
+        });
       });
+      messages.pop();
+      setMessages(messages);
     });
-    messages.pop();
-    setMessages(messages);
-  });
+  }
 };
 
 export const getLastMessage = async (conversationId) => {
@@ -731,7 +801,7 @@ export const getChatList = async (user) => {
   return (await getDoc(doc(db, "users", user.uid))).data().messages;
 };
 
-export const checkChatExist = async (authUser, user, navigate) => {
+export const checkChatExist = async (authUser, user, navigate = null) => {
   let conversationId = null;
 
   const checkExist = await authUser?.messages?.find(
@@ -742,7 +812,8 @@ export const checkChatExist = async (authUser, user, navigate) => {
   } else {
     conversationId = await createMessage(user, authUser);
   }
-  navigate(`/direct/${conversationId}`);
+  navigate && navigate(`/direct/${conversationId}`);
+  return conversationId;
 };
 
 export const getStatus = (user, setUser) => {
@@ -750,4 +821,14 @@ export const getStatus = (user, setUser) => {
   onValue(messagesRef, (snapshot) => {
     setUser({ ...user, status: snapshot?.val()?.status });
   });
+};
+
+export const seenMessage = (message, conversationId) => {
+  if (message.id) {
+    update(refrtdb(rtdb, `${conversationId}/${message.id}`), {
+      unread: false,
+    })
+      .then()
+      .catch((err) => console.log(err));
+  }
 };
