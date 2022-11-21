@@ -824,11 +824,23 @@ export const getStatus = (user, setUser) => {
 };
 
 export const seenMessage = (message, conversationId) => {
-  if (message.id) {
+  if (message?.id && message?.unread === true) {
     update(refrtdb(rtdb, `${conversationId}/${message.id}`), {
       unread: false,
+      unreadDate: new Date().getTime(),
     })
       .then()
       .catch((err) => console.log(err));
   }
+};
+
+export const checkUnreadedMessages = async (user) => {
+  const notifications = [];
+  const messages = await getChatList(user);
+  await Promise.all(
+    messages.map(async (messages) => {
+      notifications.push(await getLastMessage(messages.uid));
+    })
+  );
+  return notifications;
 };

@@ -74,13 +74,15 @@ function Comment({
           <p className="text-xs text-[#8e8e8e]">
             <TimeAgo date={comment.date} />
           </p>
-          {user.uid === authUser.uid && (
+          {user.uid === authUser.uid || userData.uid === authUser.uid ? (
             <BiDotsHorizontalRounded
               onClick={() => {
                 setDeleteModal(true);
               }}
               className="w-6 h-6 cursor-pointer text-[#8e8e8e]"
             />
+          ) : (
+            <></>
           )}
         </div>
       </div>

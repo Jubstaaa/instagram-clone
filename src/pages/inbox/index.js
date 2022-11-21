@@ -9,7 +9,7 @@ export default function InboxLayout() {
   const messageModalRef = useRef(null);
   const { conversationId } = useParams();
   const [messages, setMessages] = useState([]);
-  
+
   useEffect(() => {
     getMessages(conversationId, setMessages);
   }, [conversationId]);

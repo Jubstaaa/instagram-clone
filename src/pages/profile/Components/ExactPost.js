@@ -684,7 +684,7 @@ function ExactPost({
                     //   disabled={!comment}
                     className=" text-brand disabled:opacity-60 "
                     //   onClick={async () => {
-                    //     await addComment(comment, userData, post, authUser);
+                    //     await addComment(, userData, post, authUser);
                     //     setComment("");
                     //     setForce(!force);
                     //   }}

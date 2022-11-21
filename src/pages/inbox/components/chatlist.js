@@ -13,7 +13,7 @@ export default function ChatList({ user, messages }) {
     for (let chat of res) {
       newArray.push({ ...chat, lastMessage: await getLastMessage(chat.uid) });
     }
-    setChats(newArray);
+    setChats(newArray.filter((item) => item.lastMessage));
   };
 
   useEffect(() => {
@@ -24,6 +24,7 @@ export default function ChatList({ user, messages }) {
       .catch((err) => console.log(err));
   }, [messages]);
 
+  
   return (
     <div className="h-[calc(100%-60px)] overflow-auto py-3">
       <header className="flex items-center justify-between px-5 mb-1">

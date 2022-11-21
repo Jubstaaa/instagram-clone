@@ -3,8 +3,11 @@ import classNames from "classnames";
 import { useState, useEffect } from "react";
 import { getFriendInfo, getStatus } from "firebaseConfig";
 import TimeAgo from "react-timeago";
+import { useSelector } from "react-redux";
 
 function Chat({ chat, conversationId, lastMessage }) {
+  const authUser = useSelector((state) => state.auth.user);
+
   const [user, setUser] = useState(null);
   useEffect(() => {
     getFriendInfo(chat.receiver)
@@ -46,7 +49,8 @@ function Chat({ chat, conversationId, lastMessage }) {
           <h6
             className={classNames({
               "text-sm": true,
-              "font-semibold text-[#262626]": lastMessage?.unread,
+              "font-semibold text-[#262626]":
+                lastMessage?.unread && lastMessage.author !== authUser.uid,
             })}
           >
             {user.username}
@@ -60,7 +64,8 @@ function Chat({ chat, conversationId, lastMessage }) {
             <span
               className={classNames({
                 truncate: true,
-                "font-semibold text-[#262626]": lastMessage?.unread,
+                "font-semibold text-[#262626]":
+                  lastMessage?.unread && lastMessage.author !== authUser.uid,
               })}
             >
               {lastMessage?.message}{" "}
@@ -72,7 +77,7 @@ function Chat({ chat, conversationId, lastMessage }) {
           </div>
         </div>
       </div>
-      {lastMessage?.unread && (
+      {lastMessage?.unread && lastMessage.author !== authUser.uid && (
         <div className="h-2 w-2 bg-brand rounded-full"></div>
       )}
     </NavLink>

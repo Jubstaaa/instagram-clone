@@ -1,6 +1,6 @@
-import { logout } from "firebaseConfig";
+import { logout, checkUnreadedMessages } from "firebaseConfig";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import Search from "./Search";
 import Icon from "./Icon";
@@ -8,10 +8,22 @@ import { useSelector } from "react-redux";
 import AddPost from "./AddPost";
 
 function Header() {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [openMenu, setOpenMenu] = useState(false);
   const menuRef = useRef(null);
   const [modal, setModal] = useState(false);
+  const [notifications, setNotifications] = useState(0);
+
+  const checkNotifications = async () => {
+    setNotifications(0);
+    let final = 0;
+    const arr = await checkUnreadedMessages(user);
+    arr.map((item) => {
+      item?.unread === true && final++;
+    });
+    setNotifications(final);
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -25,6 +37,12 @@ function Header() {
     };
   }, [menuRef]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      checkNotifications();
+    }, 500);
+  }, [navigate]);
+
   return (
     <header className=" bg-white border-b border-gray-300 sticky top-0 z-50 ">
       <div className="h-[60px] flex items-center justify-between container mx-auto">
@@ -36,8 +54,15 @@ function Header() {
           <Link to="/">
             <Icon name="home" className="h-6 cursor-pointer" size={22} />
           </Link>
-          <Link to="/direct">
+          <Link to="/direct" className="relative">
             <Icon name="direct" className="cursor-pointer" size={22} />
+            {notifications > 0 && (
+              <div className="h-4 w-4 bg-red-500 rounded-full absolute -top-1 -right-1">
+                <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[11px] font-semibold text-white">
+                  {notifications}
+                </span>
+              </div>
+            )}
           </Link>
           <Icon name="heart" className="cursor-pointer" size={22} />
           <Icon

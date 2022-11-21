@@ -10,12 +10,27 @@ export default function Messages({
   const chatRef = useRef(null);
 
   useEffect(() => {
-    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    let browser_active = (
+      typeof document.hasFocus != "undefined" ? document.hasFocus() : 1
+    )
+      ? 1
+      : 0;
+    if (!browser_active) {
+    } else {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      seenMessage(
+        messages.filter((message) => message.author !== authUser.uid).at(-1),
+        conversationId
+      );
+    }
+  }, [messages]);
+
+  window.addEventListener("focus", () => {
     seenMessage(
       messages.filter((message) => message.author !== authUser.uid).at(-1),
       conversationId
     );
-  }, [messages]);
+  });
 
   return (
     <main
@@ -24,13 +39,14 @@ export default function Messages({
     >
       <div className="mb-auto" />
 
-      {messages.map((message) => (
+      {messages.map((message, i) => (
         <Message
           message={message}
           key={message.id}
           receiver={receiver}
           authUser={authUser}
           chatRef={chatRef}
+          lastMessage={i === messages.length - 1 ? true : false}
         />
       ))}
     </main>
