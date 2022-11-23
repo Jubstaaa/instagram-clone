@@ -4,8 +4,8 @@ function Home() {
   return (
     <>
       <main>
-        <div className="max-w-[53rem] mx-auto lg:flex mb-10">
-          <div className="space-y-3 lg:mx-0">
+        <div className="max-w-[53rem]  mx-auto lg:flex mb-10">
+          <div className="space-y-3 lg:mx-0 w-auto">
             <Feed />
           </div>
           <Sidebar />

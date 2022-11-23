@@ -218,20 +218,22 @@ function Profile() {
             <Icon name="post" size={12} />
             POSTS
           </NavLink>
-          <NavLink
-            to={`/${userData.username}/saved`}
-            end={true}
-            className={({ isActive }) =>
-              classNames({
-                "text-xs flex py-5 border-t tracking-widest -mt-px items-center gap-x-1.5 font-semibold": true,
-                "text-[#8e8e8e] border-transparent": !isActive,
-                "text-black border-black": isActive,
-              })
-            }
-          >
-            <Icon name="saved" size={12} />
-            SAVED
-          </NavLink>
+          {userData.uid === authUser.uid && (
+            <NavLink
+              to={`/${userData.username}/saved`}
+              end={true}
+              className={({ isActive }) =>
+                classNames({
+                  "text-xs flex py-5 border-t tracking-widest -mt-px items-center gap-x-1.5 font-semibold": true,
+                  "text-[#8e8e8e] border-transparent": !isActive,
+                  "text-black border-black": isActive,
+                })
+              }
+            >
+              <Icon name="saved" size={12} />
+              SAVED
+            </NavLink>
+          )}
         </nav>
         <Outlet context={[userData]} />
         {unfollowModal && (

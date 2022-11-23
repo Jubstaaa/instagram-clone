@@ -26,6 +26,7 @@ import {
   query,
   arrayUnion,
   arrayRemove,
+  where,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -127,6 +128,7 @@ export const register = async ({ email, password, fullName, username }) => {
           followers: [],
           following: [],
           posts: [],
+          saved: [],
         });
         await setDoc(doc(db, "usernames", username.toLowerCase()), {
           uid: response.user.uid,
@@ -199,6 +201,7 @@ export const getUsers = async () => {
 };
 
 export const removeUser = async (userData) => {
+  const user = auth.currentUser;
   deleteUser(user)
     .then(async () => {
       toast.success("Your account has been deleted!");
@@ -237,7 +240,6 @@ export const updatePhoto = (user, file) => {
   } else if (!file.type.includes("image/jp")) {
     return toast.error("Unsupported file type", { id: loading });
   } else {
-    console.log(file);
     const storageRef = ref(
       storage,
       `gs://instagram-clone-f9b98.appspot.com/${user.uid}`
@@ -542,7 +544,7 @@ export const deleteComment = async (user, post, commentId, authUser) => {
       posts: arrayUnion({
         ...post,
         comments: [
-          ...post.comments.filter((comment) => comment.uid !== commentId),
+          ...post?.comments?.filter((comment) => comment.uid !== commentId),
         ],
       }),
     });
@@ -593,7 +595,7 @@ export const removeLikes = async (user, post, authUser) => {
     await updateDoc(doc(db, "users", user.uid), {
       posts: arrayUnion({
         ...post,
-        likes: [...post.likes.filter((like) => like.uid !== authUser.uid)],
+        likes: [...post?.likes?.filter((like) => like.uid !== authUser.uid)],
       }),
     });
     updateRedux(authUser);
@@ -604,10 +606,9 @@ export const removeLikes = async (user, post, authUser) => {
 
 export const getFeed = async (following, myPosts) => {
   const posts = [...myPosts];
-
   for (let i = 0; i < following.length; i++) {
     const userData = await getFriendInfo(following[i].uid);
-    userData.posts.map((post) => {
+    userData?.posts?.map((post) => {
       posts.push({ ...post, user: userData });
     });
   }
@@ -838,9 +839,114 @@ export const checkUnreadedMessages = async (user) => {
   const notifications = [];
   const messages = await getChatList(user);
   await Promise.all(
-    messages.map(async (messages) => {
+    messages?.map(async (messages) => {
       notifications.push(await getLastMessage(messages.uid));
     })
   );
   return notifications;
+};
+
+export const checkDeletedUsers = async (user) => {
+  const username = await getDoc(doc(db, "usernames", user.username));
+  if (username.exists()) {
+    const followers = (
+      await getDoc(doc(db, "users", username.data().uid))
+    ).data().followers;
+    const followings = (
+      await getDoc(doc(db, "users", username.data().uid))
+    ).data().following;
+    const messages = (
+      await getDoc(doc(db, "users", username.data().uid))
+    ).data().messages;
+    const users = [];
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+      users.push({ uid: doc.id });
+    });
+    const results = followers?.filter(
+      ({ uid: id1 }) => !users.some(({ uid: id2 }) => id2 === id1)
+    );
+    const results1 = followings?.filter(
+      ({ uid: id1 }) => !users.some(({ uid: id2 }) => id2 === id1)
+    );
+    const results2 = messages?.filter(
+      ({ receiver: id1 }) => !users.some(({ uid: id2 }) => id2 === id1)
+    );
+    results?.map(async (item) => {
+      try {
+        await updateDoc(doc(db, "users", user.uid), {
+          followers: arrayRemove({
+            uid: item.uid,
+          }),
+        });
+      } catch (e) {
+        toast.error(e.code);
+      }
+    });
+    results1?.map(async (item) => {
+      try {
+        await updateDoc(doc(db, "users", user.uid), {
+          following: arrayRemove({
+            uid: item.uid,
+          }),
+        });
+        updateRedux(user);
+      } catch (e) {
+        toast.error(e.code);
+      }
+    });
+    results2?.map(async (item) => {
+      try {
+        await updateDoc(doc(db, "users", user.uid), {
+          messages: arrayRemove({
+            uid: item.uid,
+            receiver: item.receiver,
+          }),
+        });
+        updateRedux(user);
+      } catch (e) {
+        toast.error(e.code);
+      }
+    });
+  } else {
+    throw new Error("Kullanıcı bulunamadı!");
+  }
+};
+
+export const savePost = async (user, userUid, postUid) => {
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      saved: arrayUnion({
+        postUid,
+        userUid,
+      }),
+    });
+    updateRedux(user);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
+export const unsavePost = async (user, userUid, postUid) => {
+  try {
+    await updateDoc(doc(db, "users", user.uid), {
+      saved: arrayRemove({
+        postUid,
+        userUid,
+      }),
+    });
+    updateRedux(user);
+  } catch (e) {
+    toast.error(e);
+  }
+};
+
+export const getUserDetails = async (uid) => {
+  const stateQuery = query(collection(db, "users"), where("uid", "==", uid));
+  const querySnapshot = await getDocs(stateQuery);
+  let result = "";
+  querySnapshot.forEach((doc) => {
+    result = doc.data();
+  });
+  return result;
 };

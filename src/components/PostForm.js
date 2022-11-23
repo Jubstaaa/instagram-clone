@@ -44,7 +44,7 @@ function PostForm({
       onSubmit={async (values) => {
         type === "edit" ? await editPost(values) : await addPost(values);
         setModal(false);
-        setForce(!force);
+        setForce && setForce(!force);
       }}
     >
       {({ values, handleSubmit, handleChange, setFieldValue }) => (

@@ -49,7 +49,7 @@ function EditForm() {
             onClick={() => {
               setOpenModal(true);
             }}
-            className="h-10 w-10 cursor-pointer col-span-2 justify-self-end rounded-full"
+            className="h-10 w-10 cursor-pointer col-span-2 justify-self-end rounded-full object-cover"
             src={userData.photoURL || "/img/no-avatar.jpeg"}
             alt=""
           />

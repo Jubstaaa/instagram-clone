@@ -97,7 +97,7 @@ function Comment({
                 onClick={async () => {
                   await deleteComment(userData, post, comment.uid, authUser);
                   setDeleteModal(false);
-                  setForce(!force);
+                  setForce && setForce(!force);
                 }}
                 className="p-3 space-y-6 border-b  text-center cursor-pointer"
               >

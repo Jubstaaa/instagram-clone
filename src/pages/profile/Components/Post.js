@@ -2,7 +2,7 @@ import Icon from "components/Icon";
 import { useRef, useState, useEffect } from "react";
 import { FaComment, FaHeart } from "react-icons/fa";
 import PostModal from "./PostModal";
-function Post({ post, user }) {
+function Post({ post, user, setForce = null, force = null }) {
   const [postModal, setPostModal] = useState(false);
   const modalRef = useRef(null);
   const [comments, setComments] = useState([...post.comments]);
@@ -74,6 +74,8 @@ function Post({ post, user }) {
           post={post}
           user={user}
           comments={comments}
+          setForce={setForce}
+          force={force}
         />
       )}
     </>

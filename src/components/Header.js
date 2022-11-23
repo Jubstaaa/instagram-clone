@@ -20,7 +20,9 @@ function Header() {
     let final = 0;
     const arr = await checkUnreadedMessages(user);
     arr.map((item) => {
-      item?.unread === true && final++;
+      if (item?.unread === true && item.author !== user.uid) {
+        final++;
+      }
     });
     setNotifications(final);
   };
@@ -83,7 +85,7 @@ function Header() {
             className="avatar cursor-pointer w-7 h-7 relative"
           >
             <img
-              className="rounded-full h-full w-full"
+              className="rounded-full h-full w-full object-cover"
               src={user.photoURL || "/img/no-avatar.jpeg"}
             />
             {openMenu && (

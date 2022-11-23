@@ -43,17 +43,17 @@ function Friend({
   }
 
   return (
-    <li key={user.uid} className="flex justify-between items-center">
+    <li key={user?.uid} className="flex justify-between items-center">
       <div className="flex items-center justify-start space-x-2  py-2 pl-3 pr-1 ">
         <Link
           onClick={() => {
             setFollowersModal(false);
           }}
-          to={`/${user.username}`}
+          to={`/${user?.username}`}
         >
           <img
             className="h-11 w-11 inline-block rounded-full "
-            src={user.photoURL || "/img/no-avatar.jpeg"}
+            src={user?.photoURL || "/img/no-avatar.jpeg"}
             alt=""
           />
         </Link>
@@ -65,12 +65,12 @@ function Friend({
               onClick={() => {
                 setFollowersModal(false);
               }}
-              to={`/${user.username}`}
+              to={`/${user?.username}`}
             >
-              {user.username}
+              {user?.username}
             </Link>
 
-            {!authUser.following.find((el) => el.uid === user.uid) &&
+            {!authUser.following.find((el) => el.uid === user?.uid) &&
               authUser.uid === userData.uid && (
                 <>
                   ·
@@ -88,7 +88,7 @@ function Friend({
               )}
           </div>
           <span className="text-[#8e8e8e] text-sm text-left">
-            {user.displayName}
+            {user?.displayName}
           </span>
         </div>
       </div>
@@ -123,13 +123,13 @@ function Friend({
             <div className="bg-white rounded-lg shadow relative ">
               <div className="flex flex-col items-center justify-center p-5 border-b rounded-t space-y-1">
                 <img
-                  src={user.photoURL || "/img/no-avatar.jpeg"}
+                  src={user?.photoURL || "/img/no-avatar.jpeg"}
                   alt=""
                   className="w-[90px] h-[90px] rounded-full mb-5"
                 />
                 <h2 className="text-[22px] font-light">Remove follower?</h2>
                 <p className="text-gray-900 text-sm text-center ">
-                  Instagram won't tell {user.username} they were removed from
+                  Instagram won't tell {user?.username} they were removed from
                   your followers.
                 </p>
               </div>

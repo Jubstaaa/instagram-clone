@@ -17,10 +17,10 @@ function Sidebar() {
     <section className="w-[22rem] hidden lg:block lg:fixed ml-[30.5rem] space-y-4 pt-4 px-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="rounded-full overflow-hidden w-16 h-16 cursor-pointer">
+          <div className="rounded-full overflow-hidden w-16 h-16 cursor-pointer ">
             <Link to={`/${user.username}`}>
               <img
-                className="w-full"
+                className="w-full h-full object-cover"
                 src={user.photoURL || "/img/no-avatar.jpeg"}
                 alt=""
               />

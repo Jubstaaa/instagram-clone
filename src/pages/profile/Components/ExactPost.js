@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Icon from "components/Icon";
-import { addComment, addLikes, removeLikes, deletePost } from "firebaseConfig";
+import {
+  addComment,
+  addLikes,
+  removeLikes,
+  deletePost,
+  savePost,
+  unsavePost,
+} from "firebaseConfig";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Comment from "./Comment";
 import TimeAgo from "react-timeago";
@@ -77,7 +84,7 @@ function ExactPost({
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setPostModal(false);
+        setPostModal && setPostModal(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -254,9 +261,9 @@ function ExactPost({
                             className="cursor-pointer hover:opacity-50"
                             name="redHeart"
                             size={24}
-                            onClick={() => {
-                              removeLikes(userData, post, authUser);
-                              setForce(!force);
+                            onClick={async () => {
+                              await removeLikes(userData, post, authUser);
+                              setForce && setForce(!force);
                             }}
                           />
                         ) : (
@@ -264,9 +271,9 @@ function ExactPost({
                             className="cursor-pointer hover:opacity-50"
                             name="heart"
                             size={24}
-                            onClick={() => {
-                              addLikes(userData, post, authUser);
-                              setForce(!force);
+                            onClick={async () => {
+                              await addLikes(userData, post, authUser);
+                              setForce && setForce(!force);
                             }}
                           />
                         )}
@@ -288,11 +295,27 @@ function ExactPost({
                           size={24}
                         />
                       </div>
-                      <Icon
-                        className="cursor-pointer hover:opacity-50"
-                        name="bookmark"
-                        size={24}
-                      />
+                      {authUser?.saved?.find(
+                        (save) => save?.postUid === post?.uid
+                      ) ? (
+                        <Icon
+                          onClick={() => {
+                            unsavePost(authUser, userData.uid, post.uid);
+                          }}
+                          className="cursor-pointer hover:opacity-50 "
+                          name="bookmarkBlack"
+                          size={24}
+                        />
+                      ) : (
+                        <Icon
+                          onClick={() => {
+                            savePost(authUser, userData.uid, post.uid);
+                          }}
+                          className="cursor-pointer hover:opacity-50 "
+                          name="bookmark"
+                          size={24}
+                        />
+                      )}
                     </div>
                     {post?.likes?.length === 0 ? (
                       <span>
@@ -300,7 +323,7 @@ function ExactPost({
                         <span
                           onClick={() => {
                             addLikes(userData, post, authUser);
-                            setForce(!force);
+                            setForce && setForce(!force);
                           }}
                           className=" font-semibold cursor-pointer"
                         >
@@ -374,7 +397,7 @@ function ExactPost({
                     onClick={async () => {
                       await addComment(comment, userData, post, authUser);
                       setComment("");
-                      setForce(!force);
+                      setForce && setForce(!force);
                     }}
                   >
                     Post
