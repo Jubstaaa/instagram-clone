@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# Instagram Clone (Production)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+  React clone project that includes most of Instagram’s features. (Register, Login, Forgot Password, Feed, Profile, Edit Profile, Direct Chat, Post, Follow, Unfollow, Like, Comment etc.)
 
-## Available Scripts
+![Imgur](https://i.imgur.com/n0eCC05.jpg)
 
-In the project directory, you can run:
+> Click to view live demo
+> (https://jubstaa-iclone.netlify.app)
 
-### `npm start`
+## Techs I Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    - react
+    - redux
+    - react-router
+    - tailwind
+    - firebase auth
+    - firestore
+    - firebase realtime database
+    - firebase cloud storage
+    - classnames
+    - axios
+    - formik
+    - yup
+    - emoji-picker-react
+    - react-drag-drop-file
+    - react-helmet
+    - react-hot-toast
+    - react-share
+    - react-icons
+    - react-timeago
+    - react-twitter-embed
+    - react-hot-toast
+    - uuid
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Features
+  
+  ### Login Page
+    - You can login with your registered account.
+    - You can login with Facebook(Soon)
+    - You can sign up for app.
+    - You can use the forgot password option. You will receive a password change link in your email address.
+  ### Header
+    - You can search registered users with search bar.
+    - Available buttons on the right. Home, Direct, Notifications(Soon), Add Post, Profile, Saved, Settings, Logout. 
+  ### Main Page (Feed & Sidebar)
+    - Shows you and your followers posts by posting date.
+    - Your profile appears on sidebar, you can click and go to your profile.
+  ### Post
+    - You can like, comment, send to your friend via direct message and save post.
+    - You can go to url of post by clicking on 3 dots, copy url and share post on your social media accounts.
+    - If the post belongs to you, you can delete or edit the post as an extra. 
+    - You can translate the post title to your language by clicking on "See translation" text below the post.
+    - You can add emoji to your comment using the emoji box.
+  ### Add Post
+    - You can select post you want to share from your computer or use drag and drop method.
+    - You can add title, location, alt text information to your post and share it.
+  ### Direct
+    - In this section, you can chat with user you want in realtime.
+    - Chats are sorted by date of most recent message.
+    - Unread chats appear in bold with a blue dot next to them. Number of unread chats is displayed on direct icon in header
+    - You can use emoji, send picture and heart in the message section.
+  ### Notifications
+    Under construction
+  ### Profile
+    - In this section you can see your profile information.
+    - You can see posts you have shared and posts you have saved.
+    - You can see users of followers and users you follow.
+  ### Settings(Edit Profile & Change Password)
+    - In this section you can change or remove your profile photo.
+    - You can update your name, username, website, bio and email information.
+    - You can deactive your account temporarily.
+    - You can change your password.
