@@ -33,7 +33,9 @@
     - uuid
 
 ## Features
-  
+  ### UI 
+    - I worked on UI based on the Instagram design.
+    - Responsive Design(Soon)
   ### Login Page
     - You can login with your registered account.
     - You can login with Facebook(Soon)
