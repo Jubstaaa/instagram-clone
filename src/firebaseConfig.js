@@ -129,6 +129,7 @@ export const register = async ({ email, password, fullName, username }) => {
           following: [],
           posts: [],
           saved: [],
+          notifications: [],
         });
         await setDoc(doc(db, "usernames", username.toLowerCase()), {
           uid: response.user.uid,
@@ -181,7 +182,7 @@ export const getComments = async (uname, postId) => {
     const posts = (await getDoc(doc(db, "users", username.data().uid))).data()
       .posts;
     const post = posts.find((post) => post.uid === postId);
-    return post.comments;
+    return post?.comments;
   } else {
     throw new Error("Kullanıcı bulunamadı!");
   }
@@ -388,6 +389,14 @@ export const follow = async (authUser, userData) => {
         uid: authUser.uid,
       }),
     });
+    await updateDoc(doc(db, "users", userData.uid), {
+      notifications: arrayUnion({
+        uid: authUser.uid,
+        type: "follow",
+        unread: true,
+        date: new Date().getTime(),
+      }),
+    });
     updateRedux(authUser);
   } catch (e) {
     toast.error(e.code);
@@ -456,16 +465,20 @@ export const deletePost = async (userData, post, authUser) => {
   delete post.user;
   const loading = toast.loading();
   post = await getPostInfo(userData.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", userData.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
-    toast.success("Post deleted", { id: loading });
-    updateRedux(authUser);
-  } catch (e) {
-    toast.error(e);
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", userData.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
+      toast.success("Post deleted", { id: loading });
+      updateRedux(authUser);
+    } catch (e) {
+      toast.error(e);
+    }
+  } else {
+    toast.error("Post is no longer available", { id: loading });
   }
 };
 
@@ -474,28 +487,32 @@ export const editPost = async ({ title, alt, location, file, user, post }) => {
 
   const loading = toast.loading();
   post = await getPostInfo(user.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayUnion({
-        title,
-        alt,
-        location,
-        uid: post.uid,
-        file: post.file,
-        date: post.date,
-        comments: post.comments,
-        likes: post.likes,
-      }),
-    });
-    toast.success("Post Updated", { id: loading });
-    updateRedux(user);
-  } catch (e) {
-    toast.error(e);
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayUnion({
+          title,
+          alt,
+          location,
+          uid: post.uid,
+          file: post.file,
+          date: post.date,
+          comments: post.comments,
+          likes: post.likes,
+        }),
+      });
+      toast.success("Post Updated", { id: loading });
+      updateRedux(user);
+    } catch (e) {
+      toast.error(e);
+    }
+  } else {
+    toast.error("Post is no longer available", { id: loading });
   }
 };
 
@@ -503,104 +520,147 @@ export const addComment = async (comment, user, post, authUser) => {
   delete post.user;
   const loading = toast.loading("Comment is uploading");
   post = await getPostInfo(user.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayUnion({
-        ...post,
-        comments: [
-          ...post?.comments,
-          {
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayUnion({
+          ...post,
+          comments: [
+            ...post?.comments,
+            {
+              comment,
+              date: new Date().getTime(),
+              uid: uuidv4(),
+              userUid: authUser.uid,
+            },
+          ],
+        }),
+      });
+
+      if (authUser.uid !== user.uid) {
+        await updateDoc(doc(db, "users", user.uid), {
+          notifications: arrayUnion({
+            uid: authUser.uid,
+            type: "comment",
+            file: post.file,
+            postUid: post.uid,
             comment,
+            unread: true,
             date: new Date().getTime(),
-            uid: uuidv4(),
-            userUid: authUser.uid,
-          },
-        ],
-      }),
-    });
-    toast.success("Comment posted", { id: loading });
-    updateRedux(authUser);
-  } catch (e) {
-    toast.error(e);
+          }),
+        });
+      }
+      toast.success("Comment posted", { id: loading });
+      updateRedux(authUser);
+    } catch (e) {
+      toast.error(e);
+    }
+  } else {
+    toast.error("Post is no longer available", { id: loading });
   }
 };
 
 export const deleteComment = async (user, post, commentId, authUser) => {
   delete post.user;
   post = await getPostInfo(user.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
 
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayUnion({
-        ...post,
-        comments: [
-          ...post?.comments?.filter((comment) => comment.uid !== commentId),
-        ],
-      }),
-    });
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayUnion({
+          ...post,
+          comments: [
+            ...post?.comments?.filter((comment) => comment.uid !== commentId),
+          ],
+        }),
+      });
 
-    updateRedux(authUser);
-  } catch (e) {
-    toast.error(e);
-    console.log(e);
+      updateRedux(authUser);
+    } catch (e) {
+      toast.error(e);
+      console.log(e);
+    }
+  } else {
+    toast.error("Post is no longer available");
   }
 };
 
 export const addLikes = async (user, post, authUser) => {
   delete post.user;
   post = await getPostInfo(user.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayUnion({
-        ...post,
-        likes: [
-          ...post?.likes,
-          {
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayUnion({
+          ...post,
+          likes: [
+            ...post?.likes,
+            {
+              uid: authUser.uid,
+            },
+          ],
+        }),
+      });
+      if (authUser.uid !== user.uid) {
+        await updateDoc(doc(db, "users", user.uid), {
+          notifications: arrayUnion({
             uid: authUser.uid,
-          },
-        ],
-      }),
-    });
-    updateRedux(authUser);
-  } catch (e) {
-    toast.error(e);
+            type: "like",
+            file: post.file,
+            postUid: post.uid,
+            unread: true,
+            date: new Date().getTime(),
+          }),
+        });
+      }
+
+      updateRedux(authUser);
+    } catch (e) {
+      toast.error(e);
+    }
+  } else {
+    toast.error("Post is no longer available");
   }
 };
 
 export const removeLikes = async (user, post, authUser) => {
   delete post.user;
   post = await getPostInfo(user.username, post.uid);
-  try {
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayRemove({
-        ...post,
-      }),
-    });
+  if (post) {
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayRemove({
+          ...post,
+        }),
+      });
 
-    await updateDoc(doc(db, "users", user.uid), {
-      posts: arrayUnion({
-        ...post,
-        likes: [...post?.likes?.filter((like) => like.uid !== authUser.uid)],
-      }),
-    });
-    updateRedux(authUser);
-  } catch (e) {
-    toast.error(e);
+      await updateDoc(doc(db, "users", user.uid), {
+        posts: arrayUnion({
+          ...post,
+          likes: [...post?.likes?.filter((like) => like.uid !== authUser.uid)],
+        }),
+      });
+      updateRedux(authUser);
+    } catch (e) {
+      toast.error(e);
+    }
+  } else {
+    toast.error("Post is no longer available");
   }
 };
 
@@ -832,6 +892,28 @@ export const seenMessage = (message, conversationId) => {
     })
       .then()
       .catch((err) => console.log(err));
+  }
+};
+
+export const seenNotification = async (notification, authUser) => {
+  try {
+    await updateDoc(doc(db, "users", authUser.uid), {
+      notifications: arrayRemove({
+        ...notification,
+      }),
+    });
+
+    await updateDoc(doc(db, "users", authUser.uid), {
+      notifications: arrayUnion({
+        ...notification,
+        unread: false,
+      }),
+    });
+
+    updateRedux(authUser);
+  } catch (e) {
+    toast.error(e);
+    console.log(e);
   }
 };
 

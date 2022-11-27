@@ -6,10 +6,14 @@ import Icon from "components/Icon";
 import { Formik, Form } from "formik";
 import Separator from "components/Separator";
 import Footer from "components/Footer";
+import { Helmet } from "react-helmet";
 
 function Password() {
   return (
     <>
+      <Helmet>
+        <title>Reset Password • Instagram</title>
+      </Helmet>
       <div className="h-full pt-12 w-full flex flex-wrap overflow-auto gap-x-8 items-center justify-center ">
         <div className="w-[350px] grid ">
           <div className="bg-zinc-50 sm:bg-white sm:border p-[40px] pt-10 pb-0 flex flex-col justify-center space-y-2 ">

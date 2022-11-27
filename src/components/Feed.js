@@ -9,7 +9,7 @@ function Feed() {
 
   const getPosts = async () => {
     setPosts(
-      (await getFeed(authUser.following, authUser.posts)).sort(
+      (await getFeed(authUser?.following, authUser?.posts)).sort(
         ({ date: a }, { date: b }) => b - a
       )
     );
@@ -23,7 +23,7 @@ function Feed() {
     return <></>;
   }
   return (
-    <section className="space-y-3">
+    <section className="space-y-3 px-4">
       {posts.map((post) => (
         <Post key={post.uid} post={post} authUser={authUser} />
       ))}

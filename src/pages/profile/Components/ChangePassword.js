@@ -2,10 +2,14 @@ import { Formik, Form } from "formik";
 import { useSelector } from "react-redux";
 import { changePassword, forgotPassword } from "firebaseConfig";
 import { PasswordSchema } from "validation";
+import { Helmet } from "react-helmet";
 function ChangePassword() {
   const userData = useSelector((state) => state.auth.user);
   return (
     <div className="relative col-span-3 border-[1px] border-gray-300  ">
+      <Helmet>
+        <title>Change password • Instagram</title>
+      </Helmet>
       <div className="flex flex-col items-start justify-center pl-16 pr-40 pt-8 space-y-5">
         <div className="grid grid-cols-7 items-center justify-start space-x-6 w-full">
           <img

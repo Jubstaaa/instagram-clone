@@ -18,6 +18,7 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Following from "./Following";
 import Follower from "./Follower";
 import NoPeople from "./NoPeople";
+import Footer from "components/Footer";
 
 function Profile() {
   const navigate = useNavigate();
@@ -64,12 +65,12 @@ function Profile() {
   return (
     userData && (
       <div>
-        {/* <Helmet>
+        <Helmet>
           <title>
             {`${userData.displayName} (@${userData.username}) • Instagram photos and
             videos`}
           </title>
-        </Helmet> */}
+        </Helmet>
         <header className="flex items-center justify-start px-24 space-x-24  py-4 pb-10">
           <div className="w-[150px] h-[150px]  relative flex justify-center items-center ">
             <img
@@ -98,7 +99,9 @@ function Profile() {
                       <Icon name="settings" size={22} />
                     </Link>
                   </>
-                ) : authUser.following.find((el) => el.uid === userData.uid) ? (
+                ) : authUser?.following?.find(
+                    (el) => el.uid === userData.uid
+                  ) ? (
                   <>
                     <a
                       onClick={() => {
@@ -314,6 +317,13 @@ function Profile() {
                       authUser={authUser}
                       setFollowingModal={setFollowingModal}
                       userData={userData}
+                      type={
+                        authUser.following.find(
+                          (follower) => follower.uid === user.uid
+                        )
+                          ? null
+                          : "follow"
+                      }
                     />
                   ))}
                   {userData?.following?.length === 0 && (
@@ -371,6 +381,7 @@ function Profile() {
             </div>
           </div>
         )}
+        <Footer />
       </div>
     )
   );

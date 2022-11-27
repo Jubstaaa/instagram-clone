@@ -48,11 +48,7 @@ function DirectPost({ post, chatRef }) {
             />
           )}
           {post.file.type.includes("video") && (
-            <video
-              controls
-              controlsList=" nodownload noremoteplayback  foobar "
-              className="w-full h-full"
-            >
+            <video className="w-full h-full">
               <source src={post.file.url} type="video/mp4" />
             </video>
           )}

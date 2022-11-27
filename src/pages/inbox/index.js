@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Icon from "components/Icon";
 import Search from "components/Search";
 import { getMessages } from "firebaseConfig";
+import { Helmet } from "react-helmet";
 export default function InboxLayout() {
   const [messageModal, setMessageModal] = useState(false);
   const messageModalRef = useRef(null);
@@ -30,11 +31,17 @@ export default function InboxLayout() {
 
   return (
     <div className="border border-gray-300 rounded bg-white h-[calc(100vh-97px)] flex">
+      <Helmet>
+        <title>Inbox • Direct</title>
+      </Helmet>
       <Sidebar setMessageModal={setMessageModal} messages={messages} />
       <Outlet context={[setMessageModal, messages, setMessages]} />
 
       {messageModal && (
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <Helmet>
+            <title>New Message • Direct</title>
+          </Helmet>
           <div
             ref={messageModalRef}
             className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "

@@ -131,23 +131,6 @@ function ExactPost({
 
   return (
     <>
-      <Helmet>
-        <title>
-          {`${userData.displayName} (@${userData.username}) • Instagram photos and
-            videos`}
-        </title>
-        <meta
-          property="og:title"
-          content={`${userData.displayName} (@${userData.username}) • Instagram photos and
-            videos`}
-        />
-        <meta property="og:description" content="Instagram Clone" />
-        <meta
-          property="og:url"
-          content={`${window.location.origin}/${userData.username}/${post.uid}/`}
-        />
-        <meta property="og:image" content={post.file.url} />
-      </Helmet>
       <div
         ref={modalRef}
         className="relative  max-w-[1219px]  max-h-[513px] px-4  m-auto w-full"
@@ -165,6 +148,7 @@ function ExactPost({
                 )}
                 {post.file.type.includes("video") && (
                   <video
+                    autoPlay
                     controls
                     controlsList=" nodownload noremoteplayback  foobar "
                     className="w-full h-full"

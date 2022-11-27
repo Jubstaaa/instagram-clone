@@ -75,7 +75,7 @@ function Search({
         placeholder="Search"
         className={classNames({
           "h-9 w-full rounded bg-[#efefef] pl-9 outline-none text-[#8e8e8e] focus:text-black": true,
-          " pl-3 ": open,
+          "pl-3 pr-9": open,
         })}
       />
       <button

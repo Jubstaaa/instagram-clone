@@ -17,9 +17,12 @@
 
 @layer components {
   .card {
-    @apply border-[1px] border-gray-300 rounded-lg bg-white px-5 p-4 max-w-[30rem] mx-auto;
+    @apply border-[1px] border-gray-300 rounded-lg bg-white px-5 p-4 max-w-[30rem] m-auto;
   }
   .sidebarButton {
     @apply text-xs text-blue-500 font-semibold;
+  }
+  #root {
+    @apply mb-[68px] sm:mb-0 relative;
   }
 }

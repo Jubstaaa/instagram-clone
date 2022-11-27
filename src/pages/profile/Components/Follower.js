@@ -113,7 +113,54 @@ function Friend({
           </button>
         </div>
       )}
-
+      {authUser.following.find((el) => el.uid === user?.uid) &&
+        authUser.uid !== userData.uid &&
+        authUser.uid !== user.uid && (
+          <div className="flex flex-col justify-between  pr-3 ">
+            <button
+              onClick={() => {
+                setModal(true);
+              }}
+              className="text-black border relative border-[#dbdbdb] w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
+              type="button"
+            >
+              {loading ? (
+                <img
+                  className="h-6 w-6 m-auto absolute inset-0"
+                  src="/img/loading-gray.svg"
+                  alt=""
+                />
+              ) : (
+                "Following"
+              )}
+            </button>
+          </div>
+        )}
+      {!authUser.following.find((el) => el.uid === user?.uid) &&
+        authUser.uid !== userData.uid &&
+        authUser.uid !== user.uid && (
+          <div className="flex flex-col justify-between  pr-3 ">
+            <button
+              onClick={async () => {
+                setLoading(true);
+                await follow(authUser, user);
+                setLoading(false);
+              }}
+              className="text-white bg-brand border relative border-[#dbdbdb] w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
+              type="button"
+            >
+              {loading ? (
+                <img
+                  className="h-6 w-6 m-auto absolute inset-0"
+                  src="/img/loading-gray.svg"
+                  alt=""
+                />
+              ) : (
+                "Follow"
+              )}
+            </button>
+          </div>
+        )}
       {modal && (
         <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
           <div

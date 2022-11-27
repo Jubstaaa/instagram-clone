@@ -5,6 +5,7 @@ import { uploadPhoto } from "firebaseConfig";
 import classNames from "classnames";
 import PostForm from "./PostForm";
 import { BsArrowLeft } from "react-icons/bs";
+import { Helmet } from "react-helmet";
 function AddPost({
   setModal,
   user,
@@ -61,6 +62,9 @@ function AddPost({
 
   return (
     <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+      <Helmet>
+        <title>Create new post • Instagram</title>
+      </Helmet>
       <div
         ref={modalRef}
         className={classNames({
@@ -132,6 +136,7 @@ function AddPost({
                   )}
                   {file.type.includes("video") && (
                     <video
+                      autoPlay
                       disablePictureInPicture
                       controls
                       controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar "

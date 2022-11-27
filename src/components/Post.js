@@ -154,9 +154,12 @@ function Post({ post, authUser }) {
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
           <div className="flex gap-3 items-center -m-2">
-            <div className="w-8 h-8 overflow-hidden rounded-full cursor-pointer">
+            <Link
+              to={`/${user.username}`}
+              className="w-8 h-8 overflow-hidden rounded-full cursor-pointer"
+            >
               <img className="w-full" src={user.photoURL} alt="" />
-            </div>
+            </Link>
             <div>
               <Link to={`/${user.username}`}>
                 <h2 className=" font-semibold">{user.username}</h2>

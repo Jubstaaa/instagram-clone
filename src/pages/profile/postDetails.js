@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import Loader from "components/Loader";
 import ProfileNotFound from "./not-found";
 import { getUserInfo, getPostInfo, getComments } from "firebaseConfig";
+import { Helmet } from "react-helmet";
 
 import ExactPost from "./Components/ExactPost";
 
@@ -55,14 +56,21 @@ function PostDetails() {
   }
 
   return (
-    <ExactPost
-      post={post}
-      userData={userData}
-      comments={comments}
-      authUser={authUser}
-      force={force}
-      setForce={setForce}
-    />
+    <>
+      <Helmet>
+        <title>
+          {`Instagram post by ${userData.displayName} • ${Date(post.date)}`}
+        </title>
+      </Helmet>
+      <ExactPost
+        post={post}
+        userData={userData}
+        comments={comments}
+        authUser={authUser}
+        force={force}
+        setForce={setForce}
+      />
+    </>
   );
 }
 

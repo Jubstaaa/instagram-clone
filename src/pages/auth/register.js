@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AiFillFacebook } from "react-icons/ai";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { register } from "firebaseConfig";
-
+import { Helmet } from "react-helmet";
 import { Formik, Form } from "formik";
 import { RegisterSchema } from "validation";
 import Separator from "components/Separator";
@@ -28,6 +28,9 @@ function Register() {
 
   return (
     <>
+      <Helmet>
+        <title>Sign up • Instagram</title>
+      </Helmet>
       <div className="h-full py-12 w-full flex flex-wrap overflow-auto gap-x-8 items-center justify-center ">
         <div className="w-[350px] grid gap-y-3">
           <div className="bg-zinc-50 sm:bg-white sm:border p-[40px] pt-10 pb-6 ">
