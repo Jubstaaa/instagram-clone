@@ -65,6 +65,7 @@
     - Chats are sorted by date of most recent message.
     - Unread chats appear in bold with a blue dot next to them. Number of unread chats is displayed on direct icon in header
     - You can use emoji, send picture and heart in the message section.
+    - If a url is detected in message it will turn it into a clickable link.
   ### Notifications
     Under construction
   ### Profile
