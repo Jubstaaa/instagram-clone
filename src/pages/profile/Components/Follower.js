@@ -43,7 +43,7 @@ function Friend({
   }
 
   return (
-    <li key={user??.uid} className="flex justify-between items-center">
+    <li key={user?.uid} className="flex justify-between items-center">
       <div className="flex items-center justify-start space-x-2  py-2 pl-3 pr-1 ">
         <Link
           onClick={() => {
@@ -70,7 +70,7 @@ function Friend({
               {user?.username}
             </Link>
 
-            {!authUser.following.find((el) => el?.uid === user??.uid) &&
+            {!authUser?.following.find((el) => el?.uid === user?.uid) &&
               authUser?.uid === userData?.uid && (
                 <>
                   ·
@@ -109,7 +109,7 @@ function Friend({
           </button>
         </div>
       )}
-      {authUser.following.find((el) => el?.uid === user??.uid) &&
+      {authUser.following.find((el) => el.uid === user?.uid) &&
         authUser?.uid !== userData?.uid &&
         authUser?.uid !== user?.uid && (
           <div className="flex flex-col justify-between  pr-3 ">
@@ -128,7 +128,7 @@ function Friend({
             </button>
           </div>
         )}
-      {!authUser.following.find((el) => el?.uid === user??.uid) &&
+      {!authUser.following.find((el) => el?.uid === user?.uid) &&
         authUser?.uid !== userData?.uid &&
         authUser?.uid !== user?.uid && (
           <div className="flex flex-col justify-between  pr-3 ">
