@@ -286,7 +286,7 @@ export const uploadPhoto = (file, setFile, setDisable) => {
     setDisable(false);
 
     return toast.error("Unsupported file type", { id: loading });
-  } else if (file.size > 2097152) {
+  } else if (file.size > 5000000) {
     setDisable(false);
     return toast.error("File is too big!", { id: loading });
   } else {
@@ -795,7 +795,7 @@ export const sendPhoto = async (file, authUser, conversationId) => {
     return;
   } else if (!file.type.includes("image")) {
     return toast.error("Unsupported file type", { id: loading });
-  } else if (file.size > 2097152) {
+  } else if (file.size > 5000000) {
     return toast.error("File is too big!", { id: loading });
   } else {
     try {
