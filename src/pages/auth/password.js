@@ -22,7 +22,7 @@ function Password() {
             <h4 className="text-base font-semibold text-center">
               Trouble logging in?
             </h4>
-            <p className="text-xs text-[#8e8e8e] py-2 text-center">
+            <p className="text-xs text-secondaryLink py-2 text-center">
               Enter your email, phone, or username and we'll send you a link to
               get back into your account.
             </p>
@@ -38,7 +38,7 @@ function Password() {
               {({ values, handleSubmit, handleChange }) => (
                 <Form onSubmit={handleSubmit} className="grid gap-y-1.5">
                   <input
-                    className="w-full border-[1px] border-[#dbdbdb] p-1"
+                    className="w-full border-[1px] border-secondaryBorder p-1"
                     type="email"
                     name="email"
                     placeholder="Email"

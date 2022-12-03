@@ -37,7 +37,7 @@ function Register() {
             <a href="/" className="flex justify-center mb-4">
               <img className="h-[51px]" src="/img/instagram.png" alt="" />
             </a>
-            <p className="text-[17px] font-semibold text-[#8e8e8e] text-center mb-6">
+            <p className="text-[17px] font-semibold text-secondaryLink text-center mb-6">
               Sign up to see photos and videos from your friends.
             </p>
             <Button>
@@ -62,7 +62,7 @@ function Register() {
                   <Input name="fullName" label="Full Name" />
                   <Input name="username" label="Username" />
                   <Input type="password" name="password" label="Password" />
-                  <p className="text-xs text-[#8e8e8e] py-2 text-center">
+                  <p className="text-xs text-secondaryLink py-2 text-center">
                     People who use our service may have uploaded your contact
                     information to Instagram.{" "}
                     <a href="#" className="font-semibold">

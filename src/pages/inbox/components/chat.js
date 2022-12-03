@@ -58,7 +58,7 @@ function Chat({ chat, conversationId, lastMessage }) {
 
           <div
             className={`inline-grid grid-flow-col gap-2 justify-between items-center flex-nowrap" text-sm ${
-              !chat?.unread && "text-[#8e8e8e]"
+              !chat?.unread && "text-secondaryLink"
             }`}
           >
             <span

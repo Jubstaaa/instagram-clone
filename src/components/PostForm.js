@@ -4,7 +4,6 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useState, useEffect, useRef } from "react";
 import { addPost, editPost } from "firebaseConfig";
 import EmojiPicker from "emoji-picker-react";
-import { json } from "react-router-dom";
 
 function PostForm({
   user,
@@ -99,7 +98,7 @@ function PostForm({
                   />
                 </div>
               )}
-              <p className="text-sm text-[#8e8e8e]">
+              <p className="text-sm text-secondaryLink">
                 {values.title.length}/2,200
               </p>
             </div>
@@ -129,7 +128,7 @@ function PostForm({
             </div>
             {accesibility && (
               <div className="p-4">
-                <p className="text-xs text-[#8e8e8e]">
+                <p className="text-xs text-secondaryLink">
                   Alt text describes your photos for people with visual
                   impairments. Alt text will be automatically created for your
                   photos or you can choose to write your own.

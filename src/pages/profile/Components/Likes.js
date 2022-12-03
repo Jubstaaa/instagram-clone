@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getFriendInfo } from "firebaseConfig";
 import Following from "./Following";
-function Likes({ uid, authUser, setLikesModal }) {
+function Likes({ uid, authUser, setLikes }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -22,19 +22,19 @@ function Likes({ uid, authUser, setLikesModal }) {
   }
   return (
     <>
-      {authUser.following.find((following) => following.uid === uid) ? (
+      {authUser?.following?.find((following) => following.uid === uid) ? (
         <Following
-          key={user.uid}
-          uid={user.uid}
+          key={user?.uid}
+          uid={user?.uid}
           authUser={authUser}
-          setFollowingModal={setLikesModal}
+          setFollowing={setLikes}
         />
       ) : (
         <Following
-          key={user.uid}
-          uid={user.uid}
+          key={user?.uid}
+          uid={user?.uid}
           authUser={authUser}
-          setFollowingModal={setLikesModal}
+          setFollowing={setLikes}
           type="follow"
         />
       )}

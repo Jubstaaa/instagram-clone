@@ -12,14 +12,13 @@ function Following({
   const [modal, setModal] = useState(false);
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     getFriendInfo(uid)
       .then((res) => {
         setUser(res);
       })
       .catch((err) => {
-        setUser(false);
+        setUser(undefined);
       });
   }, []);
 
@@ -41,10 +40,6 @@ function Following({
   if (user === false) {
     return <></>;
   }
-  if (user === undefined) {
-    return <></>;
-  }
-
   return (
     <li className="flex justify-between items-center">
       <div className="flex items-center justify-start space-x-2  py-2 pl-3 pr-1 ">
@@ -52,12 +47,12 @@ function Following({
           onClick={() => {
             setFollowingModal(false);
           }}
-          to={`/${user.username}`}
+          to={`/${user?.username || "#"}`}
           className=""
         >
           <img
-            className="h-11 w-11 inline-block rounded-full object-cover "
-            src={user.photoURL || "/img/no-avatar.jpeg"}
+            className="profilePhoto"
+            src={user?.photoURL || "/img/no-avatar.jpeg"}
             alt=""
           />
         </Link>
@@ -67,18 +62,20 @@ function Following({
             onClick={() => {
               setFollowingModal(false);
             }}
-            to={`/${user.username}`}
+            to={`/${user?.username || "#"}`}
             className=""
           >
-            <span className="font-semibold text-sm">{user.username}</span>
+            <span className="font-semibold text-sm">
+              {user?.username || "Deleted User"}
+            </span>
           </Link>
 
-          <span className="text-[#8e8e8e] text-sm text-left">
-            {user.displayName}
+          <span className="text-secondaryLink text-sm text-left">
+            {user?.displayName}
           </span>
         </div>
       </div>
-      {authUser.uid !== user.uid && (
+      {authUser.uid !== user?.uid && user && (
         <div className="flex flex-col justify-between  pr-3">
           {type === "follow" ? (
             <button
@@ -91,11 +88,7 @@ function Following({
               type="submit"
             >
               {loading ? (
-                <img
-                  className="h-6 w-6 m-auto absolute inset-0"
-                  src="/img/loading.svg"
-                  alt=""
-                />
+                <img className="loading" src="/img/loading.svg" alt="" />
               ) : (
                 "Follow"
               )}
@@ -105,15 +98,11 @@ function Following({
               onClick={() => {
                 setModal(true);
               }}
-              className="text-black border relative border-[#dbdbdb] w-[114px] h-[30px] font-semibold  px-6 py-1 rounded  text-sm "
+              className="text-black border relative border-secondaryBorder w-[114px] h-[30px] font-semibold  px-6 py-1 rounded  text-sm "
               type="button"
             >
               {loading ? (
-                <img
-                  className="h-6 w-6 m-auto absolute inset-0"
-                  src="/img/loading-gray.svg"
-                  alt=""
-                />
+                <img className="loading" src="/img/loading-gray.svg" alt="" />
               ) : (
                 "Remove"
               )}
@@ -129,12 +118,12 @@ function Following({
               onClick={() => {
                 setModal(true);
               }}
-              className="text-black border relative border-[#dbdbdb] w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
+              className="text-black border relative border-secondaryBorder w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
               type="button"
             >
               {loading ? (
                 <img
-                  className="h-6 w-6 m-auto absolute inset-0"
+                  className="loading"
                   src="/img/loading-gray.svg"
                   alt=""
                 />
@@ -154,12 +143,12 @@ function Following({
                 await follow(authUser, user);
                 setLoading(false);
               }}
-              className="text-white bg-brand border relative border-[#dbdbdb] w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
+              className="text-white bg-brand border relative border-secondaryBorder w-[71px] h-[30px] font-semibold  px-1 py-1 rounded  text-sm "
               type="button"
             >
               {loading ? (
                 <img
-                  className="h-6 w-6 m-auto absolute inset-0"
+                  className="loading"
                   src="/img/loading-gray.svg"
                   alt=""
                 />
@@ -170,7 +159,7 @@ function Following({
           </div>
         )} */}
       {modal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={modalRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "

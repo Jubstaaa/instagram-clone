@@ -4,7 +4,14 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import axios from "axios";
 import TimeAgo from "react-timeago";
 import { Link } from "react-router-dom";
-import { addComment, addLikes, removeLikes, deletePost } from "firebaseConfig";
+import {
+  addComment,
+  addLikes,
+  removeLikes,
+  deletePost,
+  savePost,
+  unsavePost,
+} from "firebaseConfig";
 import Likes from "pages/profile/Components/Likes";
 import Comment from "pages/profile/Components/Comment";
 import PostModal from "pages/profile/Components/PostModal";
@@ -168,7 +175,7 @@ function Post({ post, authUser }) {
             </div>
           </div>
           <BiDotsHorizontalRounded
-            className="w-6 h-6 cursor-pointer text-[#8e8e8e]"
+            className="w-6 h-6 cursor-pointer text-secondaryLink"
             onClick={() => {
               setOptionModal(true);
             }}
@@ -231,11 +238,25 @@ function Post({ post, authUser }) {
                 size={24}
               />
             </div>
-            <Icon
-              className="cursor-pointer hover:opacity-50"
-              name="bookmark"
-              size={24}
-            />
+            {authUser?.saved?.find((save) => save?.postUid === post?.uid) ? (
+              <Icon
+                onClick={() => {
+                  unsavePost(authUser, user.uid, post.uid);
+                }}
+                className="cursor-pointer hover:opacity-50 "
+                name="bookmarkBlack"
+                size={24}
+              />
+            ) : (
+              <Icon
+                onClick={() => {
+                  savePost(authUser, user.uid, post.uid);
+                }}
+                className="cursor-pointer hover:opacity-50 "
+                name="bookmark"
+                size={24}
+              />
+            )}
           </div>
           {post?.likes?.length === 0 ? (
             <span>
@@ -290,7 +311,7 @@ function Post({ post, authUser }) {
             ))
           ) : (
             <p
-              className="text-sm text-[#8e8e8e] cursor-pointer"
+              className="text-sm text-secondaryLink cursor-pointer"
               onClick={() => {
                 setPostModal(true);
               }}
@@ -362,11 +383,8 @@ function Post({ post, authUser }) {
       </div>
 
       {likesModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-          <div
-            ref={likesRef}
-            className="relative w-[400px]  h-[400px]  max-w-2xl px-4  m-auto "
-          >
+        <div className="darkModal">
+          <div ref={likesRef} className="usersModal">
             <div className="bg-white rounded-lg shadow relative ">
               <div className="p-3  border-b  text-center  flex justify-between items-center">
                 <div></div>
@@ -406,7 +424,7 @@ function Post({ post, authUser }) {
         />
       )}
       {optionModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={optionRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -488,7 +506,7 @@ function Post({ post, authUser }) {
         </div>
       )}
       {deleteModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={deleteRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -498,7 +516,7 @@ function Post({ post, authUser }) {
                 <h3 className="text-gray-900 text-lg font-semibold ">
                   Delete post?
                 </h3>
-                <p className="text-sm text-[#8e8e8e]">
+                <p className="text-sm text-secondaryLink">
                   Are you sure you want to delete this post?
                 </p>
               </div>
@@ -528,7 +546,7 @@ function Post({ post, authUser }) {
         </div>
       )}
       {shareToModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={deleteRef}
             className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "
@@ -634,7 +652,7 @@ function Post({ post, authUser }) {
         </div>
       )}
       {directModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={directModalRef}
             className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "

@@ -94,7 +94,7 @@ export default function Message({
       {authUser.uid === message.author &&
         message.unread === false &&
         lastMessage === true && (
-          <div className="text-end text-xs text-[#8e8e8e]">
+          <div className="text-end text-xs text-secondaryLink">
             Seen <TimeAgo date={message.unreadDate} />{" "}
           </div>
         )}

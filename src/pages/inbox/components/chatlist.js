@@ -24,9 +24,8 @@ export default function ChatList({ user, messages }) {
       .catch((err) => console.log(err));
   }, [messages]);
 
-  
   return (
-    <div className="h-[calc(100%-60px)] overflow-auto py-3">
+    <div className="h-[calc(100%-60px)] overflow-auto py-3  ">
       <header className="flex items-center justify-between px-5 mb-1">
         <h6 className="text-base font-semibold">Messages</h6>
         {/* <button className="text-brand text-sm font-semibold">

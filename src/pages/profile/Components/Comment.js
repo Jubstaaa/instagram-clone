@@ -39,7 +39,6 @@ function Comment({
         setUser(false);
       });
   }, []);
-
   if (user === null) {
     return <></>;
   }
@@ -49,8 +48,10 @@ function Comment({
   if (type === "feed") {
     return (
       <p className="text-sm">
-        <Link to={`/${user.username}`}>
-          <span className="font-semibold">{user.username} </span>
+        <Link to={`/${user?.username || "#"}`}>
+          <span className="font-semibold">
+            {user?.username || "Deleted User"}{" "}
+          </span>
         </Link>
         {comment.comment}
       </p>
@@ -59,27 +60,31 @@ function Comment({
 
   return (
     <li className="flex justify-start items-center space-x-4">
-      <img src={user.photoURL} className="rounded-full h-7 w-7" alt="" />
+      <img
+        src={user?.photoURL || "/img/no-avatar.jpeg"}
+        className="rounded-full h-7 w-7"
+        alt=""
+      />
       <div className="flex flex-col justify-start items-start">
         <div className="flex justify-start items-center space-x-1">
           <Link
             className="font-semibold cursor-pointer text-sm"
-            href={`/${user.username}`}
+            to={`/${user?.username || "#"}`}
           >
-            {user.username}
+            {user?.username || "Deleted User"}
           </Link>
           <p className="text-sm">{comment.comment}</p>
         </div>
         <div className="flex justify-start items-center space-x-2">
-          <p className="text-xs text-[#8e8e8e]">
+          <p className="text-xs text-secondaryLink">
             <TimeAgo date={comment.date} />
           </p>
-          {user.uid === authUser.uid || userData.uid === authUser.uid ? (
+          {user?.uid === authUser?.uid || userData?.uid === authUser?.uid ? (
             <BiDotsHorizontalRounded
               onClick={() => {
                 setDeleteModal(true);
               }}
-              className="w-6 h-6 cursor-pointer text-[#8e8e8e]"
+              className="w-6 h-6 cursor-pointer text-secondaryLink"
             />
           ) : (
             <></>
@@ -87,7 +92,7 @@ function Comment({
         </div>
       </div>
       {deleteModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={modalRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "

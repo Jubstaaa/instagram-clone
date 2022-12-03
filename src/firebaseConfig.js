@@ -61,25 +61,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const storage = getStorage(app);
-const user = auth.currentUser;
+const user = auth?.currentUser;
 export const db = getFirestore(app);
 const rtdb = getDatabase(app);
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    const userData = await getDoc(doc(db, "users", user.uid));
+    const userData = await getDoc(doc(db, "users", user?.uid));
     let data = {
-      uid: user.uid,
-      fullName: user.displayName,
-      email: user.email,
-      ...userData.data(),
+      uid: user?.uid,
+      fullName: user?.displayName,
+      email: user?.email,
+      ...userData?.data(),
     };
     userHandle(data);
-    set(refrtdb(rtdb, "status/" + user.uid), {
+    set(refrtdb(rtdb, "status/" + user?.uid), {
       status: "online",
     });
 
-    const objRef = refrtdb(rtdb, `status/${user.uid}`);
+    const objRef = refrtdb(rtdb, `status/${user?.uid}`);
     onDisconnect(objRef).remove();
   } else {
     userHandle(false);
@@ -87,12 +87,12 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 export const updateRedux = async (user) => {
-  const userData = await getDoc(doc(db, "users", user.uid || user));
+  const userData = await getDoc(doc(db, "users", user?.uid || user));
   let data = {
-    uid: user.uid,
-    fullName: user.displayName,
-    email: user.email,
-    ...userData.data(),
+    uid: user?.uid,
+    fullName: user?.displayName,
+    email: user?.email,
+    ...userData?.data(),
   };
   userHandle(data);
 };
@@ -108,7 +108,7 @@ export const login = async (email, password) => {
 export const register = async ({ email, password, fullName, username }) => {
   try {
     const user = await getDoc(doc(db, "usernames", username));
-    if (user.exists()) {
+    if (user?.exists()) {
       toast.error("Username already used");
     } else {
       const response = await createUserWithEmailAndPassword(
@@ -116,31 +116,31 @@ export const register = async ({ email, password, fullName, username }) => {
         email,
         password
       );
-      if (response.user) {
-        await setDoc(doc(db, "users", response.user.uid), {
-          uid: response.user.uid,
+      if (response?.user) {
+        await setDoc(doc(db, "users", response?.user?.uid), {
+          uid: response?.user?.uid,
           email: email,
           displayName: fullName,
           photoURL: "/img/no-avatar.jpeg",
           website: "",
           bio: "",
-          username: username.toLowerCase(),
+          username: username?.toLowerCase(),
           followers: [],
           following: [],
           posts: [],
           saved: [],
           notifications: [],
         });
-        await setDoc(doc(db, "usernames", username.toLowerCase()), {
-          uid: response.user.uid,
+        await setDoc(doc(db, "usernames", username?.toLowerCase()), {
+          uid: response?.user?.uid,
         });
         await setDoc(doc(db, "emails", email), {
-          uid: response.user.uid,
+          uid: response?.user?.uid,
         });
-        await updateProfile(auth.currentUser, {
+        await updateProfile(auth?.currentUser, {
           displayName: fullName,
         });
-        return response.user;
+        return response?.user;
       }
     }
   } catch (err) {
@@ -158,8 +158,8 @@ export const logout = async () => {
 
 export const getUserInfo = async (uname) => {
   const username = await getDoc(doc(db, "usernames", uname));
-  if (username.exists()) {
-    return (await getDoc(doc(db, "users", username.data().uid))).data();
+  if (username?.exists()) {
+    return (await getDoc(doc(db, "users", username?.data()?.uid))).data();
   } else {
     throw new Error("Kullanıcı bulunamadı!");
   }
@@ -167,10 +167,10 @@ export const getUserInfo = async (uname) => {
 
 export const getPostInfo = async (uname, postId) => {
   const username = await getDoc(doc(db, "usernames", uname));
-  if (username.exists()) {
-    const posts = (await getDoc(doc(db, "users", username.data().uid))).data()
+  if (username?.exists()) {
+    const posts = (await getDoc(doc(db, "users", username?.data()?.uid))).data()
       .posts;
-    return posts.find((post) => post.uid === postId);
+    return posts?.find((post) => post?.uid === postId);
   } else {
     throw new Error("Kullanıcı bulunamadı!");
   }
@@ -178,10 +178,10 @@ export const getPostInfo = async (uname, postId) => {
 
 export const getComments = async (uname, postId) => {
   const username = await getDoc(doc(db, "usernames", uname));
-  if (username.exists()) {
-    const posts = (await getDoc(doc(db, "users", username.data().uid))).data()
+  if (username?.exists()) {
+    const posts = (await getDoc(doc(db, "users", username?.data()?.uid))).data()
       .posts;
-    const post = posts.find((post) => post.uid === postId);
+    const post = posts?.find((post) => post?.uid === postId);
     return post?.comments;
   } else {
     throw new Error("Kullanıcı bulunamadı!");
@@ -196,19 +196,19 @@ export const getUsers = async () => {
   const users = [];
   const usersRef = await getDocs(query(collection(db, "users")));
   usersRef.forEach((doc) => {
-    users.push(doc.data());
+    users.push(doc?.data());
   });
   return users;
 };
 
 export const removeUser = async (userData) => {
-  const user = auth.currentUser;
+  const user = auth?.currentUser;
   deleteUser(user)
     .then(async () => {
       toast.success("Your account has been deleted!");
-      await deleteDoc(doc(db, "emails", user.email));
-      await deleteDoc(doc(db, "usernames", userData.username));
-      await deleteDoc(doc(db, "users", user.uid));
+      await deleteDoc(doc(db, "emails", user?.email));
+      await deleteDoc(doc(db, "usernames", userData?.username));
+      await deleteDoc(doc(db, "users", user?.uid));
     })
     .catch((error) => {
       console.log(error);
@@ -219,10 +219,10 @@ export const removeUser = async (userData) => {
 };
 
 export const removePhoto = async (user) => {
-  await updateDoc(doc(db, "users", user.uid), {
+  await updateDoc(doc(db, "users", user?.uid), {
     photoURL: "/img/no-avatar.jpeg",
   });
-  updateProfile(auth.currentUser, {
+  updateProfile(auth?.currentUser, {
     photoURL: "/img/no-avatar.jpeg",
   })
     .then(() => {
@@ -243,7 +243,7 @@ export const updatePhoto = (user, file) => {
   } else {
     const storageRef = ref(
       storage,
-      `gs://instagram-clone-f9b98.appspot.com/${user.uid}`
+      `gs://instagram-clone-f9b98.appspot.com/${user?.uid}`
     );
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on(
@@ -253,11 +253,11 @@ export const updatePhoto = (user, file) => {
         toast.error(error.code);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          await updateDoc(doc(db, "users", user.uid), {
+        getDownloadURL(uploadTask.snapshot?.ref).then(async (downloadURL) => {
+          await updateDoc(doc(db, "users", user?.uid), {
             photoURL: downloadURL,
           });
-          updateProfile(auth.currentUser, {
+          updateProfile(auth?.currentUser, {
             photoURL: downloadURL,
           })
             .then(() => {
@@ -302,7 +302,7 @@ export const uploadPhoto = (file, setFile, setDisable) => {
         toast.error(err);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot?.ref).then((downloadURL) => {
           setFile({ type: file.type, url: downloadURL });
           toast.success("File is uploaded", {
             id: loading,
@@ -319,26 +319,26 @@ export const updateEditProfile = async (
   userData
 ) => {
   const loading = toast.loading("Profile updating");
-  updateEmail(auth.currentUser, email)
+  updateEmail(auth?.currentUser, email)
     .then(() => {
-      updateProfile(auth.currentUser, {
+      updateProfile(auth?.currentUser, {
         displayName,
       })
         .then(async () => {
-          await updateDoc(doc(db, "users", userData.uid), {
+          await updateDoc(doc(db, "users", userData?.uid), {
             displayName,
             email,
-            username: username.toLowerCase(),
+            username: username?.toLowerCase(),
             website,
             bio,
           });
-          await deleteDoc(doc(db, "emails", userData.email));
-          await deleteDoc(doc(db, "usernames", userData.username));
-          await setDoc(doc(db, "usernames", username.toLowerCase()), {
-            uid: userData.uid,
+          await deleteDoc(doc(db, "emails", userData?.email));
+          await deleteDoc(doc(db, "usernames", userData?.username));
+          await setDoc(doc(db, "usernames", username?.toLowerCase()), {
+            uid: userData?.uid,
           });
           await setDoc(doc(db, "emails", email), {
-            uid: userData.uid,
+            uid: userData?.uid,
           });
           toast.success("Profile updated", {
             id: loading,
@@ -357,7 +357,7 @@ export const updateEditProfile = async (
 };
 
 export const changePassword = async (password) => {
-  updatePassword(auth.currentUser, password)
+  updatePassword(auth?.currentUser, password)
     .then(() => {
       toast.success("Your password has been changed");
     })
@@ -379,19 +379,19 @@ export const forgotPassword = async (email) => {
 
 export const follow = async (authUser, userData) => {
   try {
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       following: arrayUnion({
-        uid: userData.uid,
+        uid: userData?.uid,
       }),
     });
-    await updateDoc(doc(db, "users", userData.uid), {
+    await updateDoc(doc(db, "users", userData?.uid), {
       followers: arrayUnion({
-        uid: authUser.uid,
+        uid: authUser?.uid,
       }),
     });
-    await updateDoc(doc(db, "users", userData.uid), {
+    await updateDoc(doc(db, "users", userData?.uid), {
       notifications: arrayUnion({
-        uid: authUser.uid,
+        uid: authUser?.uid,
         type: "follow",
         unread: true,
         date: new Date().getTime(),
@@ -405,14 +405,14 @@ export const follow = async (authUser, userData) => {
 
 export const unfollow = async (authUser, userData) => {
   try {
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       following: arrayRemove({
-        uid: userData.uid,
+        uid: userData?.uid,
       }),
     });
-    await updateDoc(doc(db, "users", userData.uid), {
+    await updateDoc(doc(db, "users", userData?.uid), {
       followers: arrayRemove({
-        uid: authUser.uid,
+        uid: authUser?.uid,
       }),
     });
     updateRedux(authUser);
@@ -423,14 +423,14 @@ export const unfollow = async (authUser, userData) => {
 
 export const unfollower = async (authUser, user) => {
   try {
-    await updateDoc(doc(db, "users", user.uid), {
+    await updateDoc(doc(db, "users", user?.uid), {
       following: arrayRemove({
-        uid: authUser.uid,
+        uid: authUser?.uid,
       }),
     });
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       followers: arrayRemove({
-        uid: user.uid,
+        uid: user?.uid,
       }),
     });
     updateRedux(authUser);
@@ -442,7 +442,7 @@ export const unfollower = async (authUser, user) => {
 export const addPost = async ({ title, alt, location, file, user }) => {
   const loading = toast.loading("Post is uploading");
   try {
-    await updateDoc(doc(db, "users", user.uid), {
+    await updateDoc(doc(db, "users", user?.uid), {
       posts: arrayUnion({
         title,
         alt,
@@ -462,12 +462,12 @@ export const addPost = async ({ title, alt, location, file, user }) => {
 };
 
 export const deletePost = async (userData, post, authUser) => {
-  delete post.user;
+  delete post?.user;
   const loading = toast.loading();
-  post = await getPostInfo(userData.username, post.uid);
+  post = await getPostInfo(userData?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", userData.uid), {
+      await updateDoc(doc(db, "users", userData?.uid), {
         posts: arrayRemove({
           ...post,
         }),
@@ -483,27 +483,27 @@ export const deletePost = async (userData, post, authUser) => {
 };
 
 export const editPost = async ({ title, alt, location, file, user, post }) => {
-  delete post.user;
+  delete post?.user;
 
   const loading = toast.loading();
-  post = await getPostInfo(user.username, post.uid);
+  post = await getPostInfo(user?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayRemove({
           ...post,
         }),
       });
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayUnion({
           title,
           alt,
           location,
-          uid: post.uid,
-          file: post.file,
-          date: post.date,
-          comments: post.comments,
-          likes: post.likes,
+          uid: post?.uid,
+          file: post?.file,
+          date: post?.date,
+          comments: post?.comments,
+          likes: post?.likes,
         }),
       });
       toast.success("Post Updated", { id: loading });
@@ -517,17 +517,17 @@ export const editPost = async ({ title, alt, location, file, user, post }) => {
 };
 
 export const addComment = async (comment, user, post, authUser) => {
-  delete post.user;
+  delete post?.user;
   const loading = toast.loading("Comment is uploading");
-  post = await getPostInfo(user.username, post.uid);
+  post = await getPostInfo(user?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayRemove({
           ...post,
         }),
       });
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayUnion({
           ...post,
           comments: [
@@ -536,19 +536,19 @@ export const addComment = async (comment, user, post, authUser) => {
               comment,
               date: new Date().getTime(),
               uid: uuidv4(),
-              userUid: authUser.uid,
+              userUid: authUser?.uid,
             },
           ],
         }),
       });
 
-      if (authUser.uid !== user.uid) {
-        await updateDoc(doc(db, "users", user.uid), {
+      if (authUser?.uid !== user?.uid) {
+        await updateDoc(doc(db, "users", user?.uid), {
           notifications: arrayUnion({
-            uid: authUser.uid,
+            uid: authUser?.uid,
             type: "comment",
-            file: post.file,
-            postUid: post.uid,
+            file: post?.file,
+            postUid: post?.uid,
             comment,
             unread: true,
             date: new Date().getTime(),
@@ -566,17 +566,17 @@ export const addComment = async (comment, user, post, authUser) => {
 };
 
 export const deleteComment = async (user, post, commentId, authUser) => {
-  delete post.user;
-  post = await getPostInfo(user.username, post.uid);
+  delete post?.user;
+  post = await getPostInfo(user?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayRemove({
           ...post,
         }),
       });
 
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayUnion({
           ...post,
           comments: [
@@ -596,33 +596,33 @@ export const deleteComment = async (user, post, commentId, authUser) => {
 };
 
 export const addLikes = async (user, post, authUser) => {
-  delete post.user;
-  post = await getPostInfo(user.username, post.uid);
+  delete post?.user;
+  post = await getPostInfo(user?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayRemove({
           ...post,
         }),
       });
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayUnion({
           ...post,
           likes: [
             ...post?.likes,
             {
-              uid: authUser.uid,
+              uid: authUser?.uid,
             },
           ],
         }),
       });
-      if (authUser.uid !== user.uid) {
-        await updateDoc(doc(db, "users", user.uid), {
+      if (authUser?.uid !== user?.uid) {
+        await updateDoc(doc(db, "users", user?.uid), {
           notifications: arrayUnion({
-            uid: authUser.uid,
+            uid: authUser?.uid,
             type: "like",
-            file: post.file,
-            postUid: post.uid,
+            file: post?.file,
+            postUid: post?.uid,
             unread: true,
             date: new Date().getTime(),
           }),
@@ -639,20 +639,20 @@ export const addLikes = async (user, post, authUser) => {
 };
 
 export const removeLikes = async (user, post, authUser) => {
-  delete post.user;
-  post = await getPostInfo(user.username, post.uid);
+  delete post?.user;
+  post = await getPostInfo(user?.username, post?.uid);
   if (post) {
     try {
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayRemove({
           ...post,
         }),
       });
 
-      await updateDoc(doc(db, "users", user.uid), {
+      await updateDoc(doc(db, "users", user?.uid), {
         posts: arrayUnion({
           ...post,
-          likes: [...post?.likes?.filter((like) => like.uid !== authUser.uid)],
+          likes: [...post?.likes?.filter((like) => like.uid !== authUser?.uid)],
         }),
       });
       updateRedux(authUser);
@@ -666,10 +666,10 @@ export const removeLikes = async (user, post, authUser) => {
 
 export const getFeed = async (following, myPosts) => {
   const posts = [...myPosts];
-  for (let i = 0; i < following.length; i++) {
-    const userData = await getFriendInfo(following[i].uid);
+  for (let i = 0; i < following?.length; i++) {
+    const userData = await getFriendInfo(following[i]?.uid);
     userData?.posts?.map((post) => {
-      posts.push({ ...post, user: userData });
+      posts?.push({ ...post, user: userData });
     });
   }
   return posts;
@@ -678,21 +678,21 @@ export const getFeed = async (following, myPosts) => {
 export const createMessage = async (user, authUser) => {
   const uid = uuidv4();
   set(refrtdb(rtdb, `${uid}/users`), {
-    uid: user.uid,
-    uid2: authUser.uid,
+    uid: user?.uid,
+    uid2: authUser?.uid,
   });
 
   try {
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       messages: arrayUnion({
         uid,
-        receiver: user.uid,
+        receiver: user?.uid,
       }),
     });
-    await updateDoc(doc(db, "users", user.uid), {
+    await updateDoc(doc(db, "users", user?.uid), {
       messages: arrayUnion({
         uid,
-        receiver: authUser.uid,
+        receiver: authUser?.uid,
       }),
     });
     updateRedux(authUser);
@@ -706,12 +706,12 @@ export const checkSenderUser = (conversationId, authUser, setSender) => {
   const dbRef = refrtdb(getDatabase());
   get(child(dbRef, `${conversationId}/users`))
     .then(async (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot?.exists()) {
         setSender(
           await getFriendInfo(
-            snapshot.val().uid === authUser.uid
-              ? snapshot.val().uid
-              : snapshot.val().uid2 === authUser.uid && snapshot.val().uid2
+            snapshot?.val()?.uid === authUser?.uid
+              ? snapshot?.val()?.uid
+              : snapshot?.val()?.uid2 === authUser?.uid && snapshot?.val()?.uid2
           )
         );
       } else {
@@ -727,12 +727,12 @@ export const checkReceiverUser = (conversationId, authUser, setReceiver) => {
   const dbRef = refrtdb(getDatabase());
   get(child(dbRef, `${conversationId}/users`))
     .then(async (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot?.exists()) {
         setReceiver(
           await getFriendInfo(
-            snapshot.val().uid === authUser.uid
-              ? snapshot.val().uid2
-              : snapshot.val().uid
+            snapshot?.val()?.uid === authUser?.uid
+              ? snapshot?.val()?.uid2
+              : snapshot?.val()?.uid
           )
         );
       } else {
@@ -751,7 +751,7 @@ export const sendMessage = async (
   receiver
 ) => {
   const msg = {
-    author: authUser.uid,
+    author: authUser?.uid,
     message,
     date: new Date().getTime(),
     unread: true,
@@ -766,7 +766,7 @@ export const sendMessage = async (
 
 export const sendPost = async (authUser, post, userData, conversationId) => {
   const msg = {
-    author: authUser.uid,
+    author: authUser?.uid,
     message: "Sent you a post",
     post,
     date: new Date().getTime(),
@@ -783,7 +783,7 @@ export const sendPost = async (authUser, post, userData, conversationId) => {
 
 export const sendPhoto = async (file, authUser, conversationId) => {
   const msg = {
-    author: authUser.uid,
+    author: authUser?.uid,
     message: "Sent you a photo",
     image: "",
     date: new Date().getTime(),
@@ -811,7 +811,7 @@ export const sendPhoto = async (file, authUser, conversationId) => {
           toast.error(err);
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          getDownloadURL(uploadTask.snapshot?.ref).then((downloadURL) => {
             msg.image = downloadURL;
             toast.success("File is uploaded", {
               id: loading,
@@ -837,10 +837,10 @@ export const getMessages = (conversationId, setMessages) => {
     onValue(messagesRef, (snapshot) => {
       let messages = [];
 
-      snapshot.forEach((message) => {
+      snapshot?.forEach((message) => {
         messages.push({
-          id: message.key,
-          ...message.val(),
+          id: message?.key,
+          ...message?.val(),
         });
       });
       messages.pop();
@@ -853,20 +853,20 @@ export const getLastMessage = async (conversationId) => {
   const messagesRef = refrtdb(rtdb, conversationId);
   const snapshot = await get(messagesRef);
 
-  return Object.values(snapshot.val())[
-    Object.values(snapshot.val()).length - 2
+  return Object.values(snapshot?.val())[
+    Object.values(snapshot?.val()).length - 2
   ];
 };
 
 export const getChatList = async (user) => {
-  return (await getDoc(doc(db, "users", user.uid))).data().messages;
+  return (await getDoc(doc(db, "users", user?.uid)))?.data()?.messages;
 };
 
 export const checkChatExist = async (authUser, user, navigate = null) => {
   let conversationId = null;
 
   const checkExist = await authUser?.messages?.find(
-    (message) => message.receiver === user.uid
+    (message) => message?.receiver === user?.uid
   );
   if (checkExist) {
     conversationId = checkExist.uid;
@@ -878,7 +878,7 @@ export const checkChatExist = async (authUser, user, navigate = null) => {
 };
 
 export const getStatus = (user, setUser) => {
-  const messagesRef = refrtdb(rtdb, `status/${user.uid}`);
+  const messagesRef = refrtdb(rtdb, `status/${user?.uid}`);
   onValue(messagesRef, (snapshot) => {
     setUser({ ...user, status: snapshot?.val()?.status });
   });
@@ -886,7 +886,7 @@ export const getStatus = (user, setUser) => {
 
 export const seenMessage = (message, conversationId) => {
   if (message?.id && message?.unread === true) {
-    update(refrtdb(rtdb, `${conversationId}/${message.id}`), {
+    update(refrtdb(rtdb, `${conversationId}/${message?.id}`), {
       unread: false,
       unreadDate: new Date().getTime(),
     })
@@ -897,13 +897,13 @@ export const seenMessage = (message, conversationId) => {
 
 export const seenNotification = async (notification, authUser) => {
   try {
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       notifications: arrayRemove({
         ...notification,
       }),
     });
 
-    await updateDoc(doc(db, "users", authUser.uid), {
+    await updateDoc(doc(db, "users", authUser?.uid), {
       notifications: arrayUnion({
         ...notification,
         unread: false,
@@ -922,28 +922,28 @@ export const checkUnreadedMessages = async (user) => {
   const messages = await getChatList(user);
   await Promise.all(
     messages?.map(async (messages) => {
-      notifications.push(await getLastMessage(messages.uid));
+      notifications.push(await getLastMessage(messages?.uid));
     })
   );
   return notifications;
 };
 
 export const checkDeletedUsers = async (user) => {
-  const username = await getDoc(doc(db, "usernames", user.username));
-  if (username.exists()) {
+  const username = await getDoc(doc(db, "usernames", user?.username));
+  if (username?.exists()) {
     const followers = (
-      await getDoc(doc(db, "users", username.data().uid))
-    ).data().followers;
+      await getDoc(doc(db, "users", username?.data()?.uid))
+    ).data()?.followers;
     const followings = (
-      await getDoc(doc(db, "users", username.data().uid))
-    ).data().following;
+      await getDoc(doc(db, "users", username?.data()?.uid))
+    ).data()?.following;
     const messages = (
-      await getDoc(doc(db, "users", username.data().uid))
-    ).data().messages;
+      await getDoc(doc(db, "users", username?.data()?.uid))
+    ).data()?.messages;
     const users = [];
     const querySnapshot = await getDocs(collection(db, "users"));
-    querySnapshot.forEach((doc) => {
-      users.push({ uid: doc.id });
+    querySnapshot?.forEach((doc) => {
+      users.push({ uid: doc?.id });
     });
     const results = followers?.filter(
       ({ uid: id1 }) => !users.some(({ uid: id2 }) => id2 === id1)
@@ -956,9 +956,9 @@ export const checkDeletedUsers = async (user) => {
     );
     results?.map(async (item) => {
       try {
-        await updateDoc(doc(db, "users", user.uid), {
+        await updateDoc(doc(db, "users", user?.uid), {
           followers: arrayRemove({
-            uid: item.uid,
+            uid: item?.uid,
           }),
         });
       } catch (e) {
@@ -967,9 +967,9 @@ export const checkDeletedUsers = async (user) => {
     });
     results1?.map(async (item) => {
       try {
-        await updateDoc(doc(db, "users", user.uid), {
+        await updateDoc(doc(db, "users", user?.uid), {
           following: arrayRemove({
-            uid: item.uid,
+            uid: item?.uid,
           }),
         });
         updateRedux(user);
@@ -979,10 +979,10 @@ export const checkDeletedUsers = async (user) => {
     });
     results2?.map(async (item) => {
       try {
-        await updateDoc(doc(db, "users", user.uid), {
+        await updateDoc(doc(db, "users", user?.uid), {
           messages: arrayRemove({
-            uid: item.uid,
-            receiver: item.receiver,
+            uid: item?.uid,
+            receiver: item?.receiver,
           }),
         });
         updateRedux(user);
@@ -997,7 +997,7 @@ export const checkDeletedUsers = async (user) => {
 
 export const savePost = async (user, userUid, postUid) => {
   try {
-    await updateDoc(doc(db, "users", user.uid), {
+    await updateDoc(doc(db, "users", user?.uid), {
       saved: arrayUnion({
         postUid,
         userUid,
@@ -1011,7 +1011,7 @@ export const savePost = async (user, userUid, postUid) => {
 
 export const unsavePost = async (user, userUid, postUid) => {
   try {
-    await updateDoc(doc(db, "users", user.uid), {
+    await updateDoc(doc(db, "users", user?.uid), {
       saved: arrayRemove({
         postUid,
         userUid,
@@ -1027,8 +1027,8 @@ export const getUserDetails = async (uid) => {
   const stateQuery = query(collection(db, "users"), where("uid", "==", uid));
   const querySnapshot = await getDocs(stateQuery);
   let result = "";
-  querySnapshot.forEach((doc) => {
-    result = doc.data();
+  querySnapshot?.forEach((doc) => {
+    result = doc?.data();
   });
   return result;
 };

@@ -6,8 +6,8 @@ import Search from "components/Search";
 import { getMessages } from "firebaseConfig";
 import { Helmet } from "react-helmet";
 export default function InboxLayout() {
-  const [messageModal, setMessageModal] = useState(false);
-  const messageModalRef = useRef(null);
+  const [message, setMessage] = useState(false);
+  const messageRef = useRef(null);
   const { conversationId } = useParams();
   const [messages, setMessages] = useState([]);
 
@@ -16,34 +16,31 @@ export default function InboxLayout() {
   }, [conversationId]);
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        messageModalRef.current &&
-        !messageModalRef.current.contains(event.target)
-      ) {
-        setMessageModal(false);
+      if (messageRef.current && !messageRef.current.contains(event.target)) {
+        setMessage(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [messageModalRef]);
+  }, [messageRef]);
 
   return (
-    <div className="border border-gray-300 rounded bg-white h-[calc(100vh-97px)] flex">
+    <div className="border border-gray-300 rounded bg-white h-[calc(100vh-250px)] sm:h-[calc(100vh-97px)] flex">
       <Helmet>
         <title>Inbox • Direct</title>
       </Helmet>
-      <Sidebar setMessageModal={setMessageModal} messages={messages} />
-      <Outlet context={[setMessageModal, messages, setMessages]} />
+      <Sidebar setMessage={setMessage} messages={messages} />
+      <Outlet context={[setMessage, messages, setMessages]} />
 
-      {messageModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+      {message && (
+        <div className="">
           <Helmet>
             <title>New Message • Direct</title>
           </Helmet>
           <div
-            ref={messageModalRef}
+            ref={messageRef}
             className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "
           >
             <div className="bg-white rounded-lg shadow relative ">
@@ -51,7 +48,7 @@ export default function InboxLayout() {
                 <div
                   className="cursor-pointer"
                   onClick={() => {
-                    setMessageModal(false);
+                    setMessage(false);
                   }}
                 >
                   <Icon name="close" size={18} />
@@ -76,7 +73,7 @@ export default function InboxLayout() {
                 <Search
                   className="w-full"
                   type="message"
-                  setMessageModal={setMessageModal}
+                  setMessage={setMessage}
                 />
               </div>
             </div>

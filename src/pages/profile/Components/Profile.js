@@ -71,7 +71,7 @@ function Profile() {
             videos`}
           </title>
         </Helmet>
-        <header className="flex items-center justify-start px-24 space-x-24  py-4 pb-10">
+        <header className="flex-col sm:flex-row flex items-center justify-start px-24 space-y-4 sm:space-y-0 sm:space-x-24 py-4 pb-10">
           <div className="w-[150px] h-[150px]  relative flex justify-center items-center ">
             <img
               src={userData.photoURL || "/img/no-avatar.jpeg"}
@@ -79,15 +79,15 @@ function Profile() {
               className="w-full h-full object-cover  rounded-full   "
             />
           </div>
-          <div className="flex w-6/12 justify-items-between items-start flex-col space-y-3">
-            <div className="flex w-full justify-start items-center space-x-6">
+          <div className="flex w-screen sm:w-6/12 justify-items-between items-center sm:items-start flex-col space-y-3">
+            <div className="flex w-full justify-center sm:justify-start items-center space-x-6">
               <h1 className="text-[28px] font-light">{userData.username}</h1>
               <div className="flex justify-center items-center space-x-2">
                 {userData.uid === authUser.uid ? (
                   <>
                     <Link
-                      to="/accounts/edit"
-                      className="text-black border border-[#dbdbdb] font-semibold  px-2 py-1 rounded  text-sm "
+                      to="/accounts/edit/profile"
+                      className="text-black border border-secondaryBorder font-semibold  px-2 py-1 rounded  text-sm "
                       type="button"
                     >
                       Edit Profile
@@ -107,7 +107,7 @@ function Profile() {
                       onClick={() => {
                         checkChatExist(authUser, userData, navigate);
                       }}
-                      className="text-black border border-[#dbdbdb] font-semibold  px-2 py-1 rounded  text-sm cursor-pointer "
+                      className="text-black border border-secondaryBorder font-semibold  px-2 py-1 rounded  text-sm cursor-pointer "
                       type="button"
                     >
                       Message
@@ -117,13 +117,13 @@ function Profile() {
                       onClick={async () => {
                         await setUnfollowModal(true);
                       }}
-                      className="text-black border border-[#dbdbdb] font-semibold  px-6 py-1 rounded  text-sm cursor-pointer relative"
+                      className="text-black border border-secondaryBorder font-semibold  px-6 py-1 rounded  text-sm cursor-pointer relative"
                       type="button"
                     >
                       <Icon name="follow" size={20} />
                       {loading && (
                         <img
-                          className="h-6 w-6 m-auto absolute inset-0"
+                          className="loading"
                           src="/img/loading-gray.svg"
                           alt=""
                         />
@@ -146,7 +146,7 @@ function Profile() {
                           "Follow"
                         ) : (
                           <img
-                            className="h-6 w-6 m-auto absolute inset-0"
+                            className="loading"
                             src="/img/loading.svg"
                             alt=""
                           />
@@ -212,8 +212,8 @@ function Profile() {
             end={true}
             className={({ isActive }) =>
               classNames({
-                "text-xs flex py-5 border-t tracking-widest -mt-px items-center gap-x-1.5 font-semibold": true,
-                "text-[#8e8e8e] border-transparent": !isActive,
+                profileTab: true,
+                "text-secondaryLink border-transparent": !isActive,
                 "text-black border-black": isActive,
               })
             }
@@ -227,8 +227,8 @@ function Profile() {
               end={true}
               className={({ isActive }) =>
                 classNames({
-                  "text-xs flex py-5 border-t tracking-widest -mt-px items-center gap-x-1.5 font-semibold": true,
-                  "text-[#8e8e8e] border-transparent": !isActive,
+                  profileTab: true,
+                  "text-secondaryLink border-transparent": !isActive,
                   "text-black border-black": isActive,
                 })
               }
@@ -240,7 +240,7 @@ function Profile() {
         </nav>
         <Outlet context={[userData]} />
         {unfollowModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div className="darkModal">
             <div
               ref={modalRef}
               className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -286,11 +286,8 @@ function Profile() {
           </div>
         )}
         {followingModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-            <div
-              ref={modalRef}
-              className="relative w-[400px]  h-[400px]  max-w-2xl px-4  m-auto "
-            >
+          <div className="darkModal">
+            <div ref={modalRef} className="usersModal">
               <div className="bg-white rounded-lg shadow relative ">
                 <div className="p-3  border-b  text-center  flex justify-between items-center">
                   <div></div>
@@ -338,11 +335,8 @@ function Profile() {
           </div>
         )}
         {followersModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-            <div
-              ref={modalRef}
-              className="relative w-[400px]  h-[400px]  max-w-2xl px-4  m-auto "
-            >
+          <div className="darkModal">
+            <div ref={modalRef} className="usersModal">
               <div className="bg-white rounded-lg shadow relative ">
                 <div className="p-3  border-b  text-center  flex justify-between items-center">
                   <div></div>

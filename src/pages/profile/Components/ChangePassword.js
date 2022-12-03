@@ -6,11 +6,11 @@ import { Helmet } from "react-helmet";
 function ChangePassword() {
   const userData = useSelector((state) => state.auth.user);
   return (
-    <div className="relative col-span-3 border-[1px] border-gray-300  ">
+    <div className="relative col-span-4 sm:col-span-3 border-[1px] border-gray-300  ">
       <Helmet>
         <title>Change password • Instagram</title>
       </Helmet>
-      <div className="flex flex-col items-start justify-center pl-16 pr-40 pt-8 space-y-5">
+      <div className="flex flex-col items-start justify-center sm:pl-16 pr-10 py-4 sm:pr-40 sm:pt-8 space-y-5">
         <div className="grid grid-cols-7 items-center justify-start space-x-6 w-full">
           <img
             className="h-10 w-10 col-span-2 justify-self-end rounded-full"
@@ -45,7 +45,7 @@ function ChangePassword() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="password"
                       name="oldPassword"
                       onChange={handleChange}
@@ -59,7 +59,7 @@ function ChangePassword() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="password"
                       name="password"
                       onChange={handleChange}
@@ -73,7 +73,7 @@ function ChangePassword() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="password"
                       name="confirmPassword"
                       onChange={handleChange}

@@ -25,7 +25,7 @@ function Posts() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-7 justify-center justify-items-center">
+        <div className="grid grid-cols-3 gap-7 justify-center justify-items-center relative">
           {posts.map((post) => (
             <Post key={post.uid} post={post} user={user} />
           ))}

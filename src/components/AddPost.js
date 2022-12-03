@@ -27,7 +27,7 @@ function AddPost({
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        if (file) {
+        if (file && !discard) {
           setDiscard(true);
         } else {
           setModal(false);
@@ -61,7 +61,7 @@ function AddPost({
   }, []);
 
   return (
-    <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+    <div className="darkModal">
       <Helmet>
         <title>Create new post • Instagram</title>
       </Helmet>
@@ -87,7 +87,7 @@ function AddPost({
             ) : (
               <BsArrowLeft
                 onClick={() => {
-                  setDiscard(true);
+                  !file ? setModal(false) : setDiscard(true);
                 }}
                 className="h-7 w-7 cursor-pointer"
               />
@@ -163,7 +163,7 @@ function AddPost({
         </div>
       </div>
       {discard && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={discardModal}
             className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -173,7 +173,7 @@ function AddPost({
                 <h3 className="text-gray-900 text-lg font-semibold ">
                   Discard post?
                 </h3>
-                <p className="text-[#8e8e8e]">
+                <p className="text-secondaryLink">
                   If you leave, your edits won't be saved.
                 </p>
               </div>

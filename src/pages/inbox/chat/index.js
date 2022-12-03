@@ -33,7 +33,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 ">
       <Header user={receiver} />
       <Messages
         messages={messages}

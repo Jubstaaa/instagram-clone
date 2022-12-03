@@ -43,11 +43,11 @@ function EditForm() {
   }, [modalRef]);
 
   return (
-    <div className="relative col-span-3 border-[1px] border-gray-300  ">
+    <div className="sm:relative col-span-4 sm:col-span-3 border-[1px] border-gray-300  sm:block  ">
       <Helmet>
         <title>Edit profile • Instagram</title>
       </Helmet>
-      <div className="flex flex-col items-start justify-center pl-16 pr-40 pt-8 space-y-5">
+      <div className="flex flex-col items-start justify-center sm:pl-16 pr-10 py-4 sm:pr-40 sm:pt-8 space-y-5  ">
         <div className="grid grid-cols-7 items-center justify-start space-x-6 w-full">
           <img
             onClick={() => {
@@ -107,19 +107,19 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="text"
                       placeholder="Name"
                       name="displayName"
                       onChange={handleChange}
                       value={values.displayName}
                     />
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       Help people discover your account by using the name you're
                       known by: either your full name, nickname, or business
                       name.
                     </p>
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       You can only change your name twice within 14 days.
                     </p>
                   </div>
@@ -130,14 +130,14 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="text"
                       placeholder="Username"
                       name="username"
                       onChange={handleChange}
                       value={values.username}
                     />
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       In most cases, you'll be able to change your username back
                       to {userData.username} for another 14 days.{" "}
                       <a href="#" className="text-brand">
@@ -152,14 +152,14 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="text"
                       placeholder="Website"
                       name="website"
                       onChange={handleChange}
                       value={values.website}
                     />
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       Editing your links is only available on mobile. Visit the
                       Instagram app and edit your profile to change the websites
                       in your bio.
@@ -172,14 +172,14 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <textarea
-                      className="w-full border-[1px] border-[#dbdbdb] p-1 resize-none	"
+                      className="w-full border-[1px] border-secondaryBorder p-1 resize-none	"
                       type="text"
                       name="bio"
                       maxLength="150"
                       onChange={handleChange}
                       value={values.bio}
                     />
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       {values.bio.length} / 150
                     </p>
                   </div>
@@ -187,10 +187,10 @@ function EditForm() {
                 <div className="grid grid-cols-7 items-start justify-start space-x-5 w-full">
                   <label className="col-span-2 font-semibold pt-1 text-end"></label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-1">
-                    <h2 className="text-[#8e8e8e] text-sm font-semibold">
+                    <h2 className="text-secondaryLink text-sm font-semibold">
                       Personal information
                     </h2>
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       Provide your personal information, even if the account is
                       used for a business, a pet or something else. This won't
                       be a part of your public profile.
@@ -203,7 +203,7 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="text"
                       placeholder="Email"
                       name="email"
@@ -218,7 +218,7 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="tel"
                       disabled
                       placeholder="Phone number"
@@ -231,7 +231,7 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex flex-col justify-center items-start space-y-3">
                     <input
-                      className="w-full border-[1px] border-[#dbdbdb] p-1"
+                      className="w-full border-[1px] border-secondaryBorder p-1"
                       type="text"
                       disabled
                     />
@@ -243,7 +243,7 @@ function EditForm() {
                   </label>
                   <div className="col-span-5 w-full flex justify-start items-center space-y-3">
                     <input
-                      className=" border-[1px] border-[#dbdbdb]"
+                      className=" border-[1px] border-secondaryBorder"
                       type="checkbox"
                       disabled
                     />
@@ -283,7 +283,7 @@ function EditForm() {
       </div>
 
       {openModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={modalRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -330,7 +330,7 @@ function EditForm() {
         </div>
       )}
       {deleteModal && (
-        <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div className="darkModal">
           <div
             ref={modalRef}
             className="relative w-[400px] max-w-2xl px-4  m-auto "

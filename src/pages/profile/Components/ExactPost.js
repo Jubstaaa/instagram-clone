@@ -133,12 +133,12 @@ function ExactPost({
     <>
       <div
         ref={modalRef}
-        className="relative  max-w-[1219px]  max-h-[513px] px-4  m-auto w-full"
+        className="relative max-w-[1219px]  max-h-[513px] px-4  m-auto w-full"
       >
-        <div className="bg-white rounded-lg shadow relative  ">
-          <div className="min-h-[513px] h-[513px] flex items-center justify-between">
+        <div className="bg-white rounded-lg  m-auto shadow relative  ">
+          <div className="flex-col sm:flex-row sm:min-h-[513px] sm:h-[513px] flex items-center justify-between relative">
             <>
-              <div className="w-full h-full bg-black relative flex justify-center items-center">
+              <div className="hidden w-full h-full bg-black relative sm:flex justify-center items-center">
                 {post.file.type.includes("image") && (
                   <img
                     src={post.file.url}
@@ -161,13 +161,18 @@ function ExactPost({
                 <div className="items-start justify-start space-x-5 w-full  border-b">
                   <div className=" flex justify-between items-center ">
                     <div className="w-full flex justify-start items-center space-x-3 p-4">
-                      <img
-                        src={userData.photoURL}
-                        className="rounded-full h-7 w-7"
-                        alt=""
-                      />
+                      <Link to={`/${userData.username}`}>
+                        <img
+                          src={userData.photoURL}
+                          className="rounded-full h-7 w-7"
+                          alt=""
+                        />
+                      </Link>
+
                       <div className="flex flex-col justify-between items-start">
-                        <p className="font-semibold">{userData.username}</p>
+                        <Link to={`/${userData.username}`}>
+                          <p className="font-semibold">{userData.username}</p>
+                        </Link>
                         {post.location && (
                           <p className="text-xs">{post.location}</p>
                         )}
@@ -178,9 +183,28 @@ function ExactPost({
                       onClick={() => {
                         setOptionModal(true);
                       }}
-                      className="w-6 h-6 cursor-pointer m-4 text-[#8e8e8e]"
+                      className="w-6 h-6 cursor-pointer m-4 text-secondaryLink"
                     />
                   </div>
+                </div>
+                <div className="flex w-full h-full bg-black relative sm:hidden justify-center items-center">
+                  {post.file.type.includes("image") && (
+                    <img
+                      src={post.file.url}
+                      className="h-full object-scale-down"
+                      alt={post.alt}
+                    />
+                  )}
+                  {post.file.type.includes("video") && (
+                    <video
+                      autoPlay
+                      controls
+                      controlsList=" nodownload noremoteplayback  foobar "
+                      className="w-full h-full"
+                    >
+                      <source src={post.file.url} type="video/mp4" />
+                    </video>
+                  )}
                 </div>
                 <div className="items-start justify-start space-x-5 w-full  border-b">
                   <div className=" flex flex-col justify-center items-center  h-72">
@@ -203,7 +227,7 @@ function ExactPost({
                                 </Link>
                                 <p className="text-sm">{post.title}</p>
                               </div>
-                              <p className="text-xs text-[#8e8e8e]">
+                              <p className="text-xs text-secondaryLink">
                                 <TimeAgo date={post.date} />
                               </p>
                             </div>
@@ -234,6 +258,7 @@ function ExactPost({
                     )}
                   </div>
                 </div>
+
                 <div className="items-start justify-start space-x-5 w-full  border-b">
                   <div className="px-5 py-2">
                     <div className="flex justify-between mb-2">
@@ -335,7 +360,7 @@ function ExactPost({
                       </span>
                     )}
 
-                    <p className="text-xs text-[#8e8e8e]">
+                    <p className="text-xs text-secondaryLink">
                       <TimeAgo date={post.date} />
                     </p>
                   </div>
@@ -392,11 +417,8 @@ function ExactPost({
           </div>
         </div>
         {likesModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
-            <div
-              ref={likesRef}
-              className="relative w-[400px]  h-[400px]  max-w-2xl px-4  m-auto "
-            >
+          <div className="darkModal">
+            <div ref={likesRef} className="usersModal">
               <div className="bg-white rounded-lg shadow relative ">
                 <div className="p-3  border-b  text-center  flex justify-between items-center">
                   <div></div>
@@ -429,7 +451,7 @@ function ExactPost({
           </div>
         )}
         {optionModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div className="darkModal">
             <div
               ref={optionRef}
               className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -511,7 +533,7 @@ function ExactPost({
           </div>
         )}
         {deleteModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div className="darkModal">
             <div
               ref={deleteRef}
               className="relative w-[400px] max-w-2xl px-4  m-auto "
@@ -521,7 +543,7 @@ function ExactPost({
                   <h3 className="text-gray-900 text-lg font-semibold ">
                     Delete post?
                   </h3>
-                  <p className="text-sm text-[#8e8e8e]">
+                  <p className="text-sm text-secondaryLink">
                     Are you sure you want to delete this post?
                   </p>
                 </div>
@@ -551,7 +573,7 @@ function ExactPost({
           </div>
         )}
         {shareToModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div className="darkModal">
             <div
               ref={deleteRef}
               className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "
@@ -668,7 +690,7 @@ function ExactPost({
           />
         )}
         {directModal && (
-          <div className="flex bg-black/60 overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+          <div className="darkModal">
             <div
               ref={directModalRef}
               className="relative w-[400px] h-[400px] max-h-[400px] max-w-2xl px-4  m-auto "

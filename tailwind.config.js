@@ -20,6 +20,7 @@ module.exports = {
         facebook: "#385185",
         link: "#00376b",
         secondaryLink: "#8e8e8e",
+        secondaryBorder: "#dbdbdb",
       },
       backgroundImage: {
         phone: "url('/public/img/phone.png')",

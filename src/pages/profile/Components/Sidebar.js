@@ -1,16 +1,25 @@
 import Icon from "components/Icon";
 import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import classNames from "classnames";
 function Sidebar() {
+  const location = useLocation();
+
   return (
-    <div className="col-span-1 border-[1px] border-gray-300">
+    <div
+      className={classNames({
+        "col-span-4 sm:col-span-1 border-[1px] border-gray-300 ": true,
+        "hidden sm:block": location.pathname.split("/").length === 4,
+      })}
+    >
       <ul className="flex flex-col border-b-2 ">
         <NavLink
           end
-          to="./"
+          to="./profile"
           className={({ isActive }) =>
             isActive
               ? "border-l-2 border-l-black font-semibold"
-              : "border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]"
+              : "border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder"
           }
         >
           <span className="flex flex-row items-center h-12  text-black">
@@ -23,67 +32,67 @@ function Sidebar() {
           className={({ isActive }) =>
             isActive
               ? "border-l-2 border-l-black font-semibold"
-              : "border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]"
+              : "border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder"
           }
         >
           <span className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Change password</span>
           </span>
         </NavLink>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Apps and websites</span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">
               Email notifications
             </span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">
               Push notifications
             </span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Manage contacts</span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">
               Privacy and security
             </span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Ads</span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Supervision</span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Login activity</span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">
               Emails from Instagram
             </span>
           </a>
         </li>
-        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-[#dbdbdb]">
+        <li className="border-l-2 border-l-transparent hover:bg-zinc-50 hover:border-l-secondaryBorder">
           <a href="#" className="flex flex-row items-center h-12  text-black ">
             <span className="text-base  py-2 px-[30px]">Help</span>
           </a>

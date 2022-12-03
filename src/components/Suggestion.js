@@ -21,6 +21,9 @@ function Suggestion({ uid, authUser }) {
   if (user === false) {
     return <></>;
   }
+  if (user === undefined) {
+    return <></>;
+  }
   return (
     <div key={user.ui} className="flex justify-between items-center">
       <div className="flex gap-3 items-center">

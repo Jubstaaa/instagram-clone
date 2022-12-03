@@ -80,6 +80,10 @@ const routes = [
                 element: <EditForm />,
               },
               {
+                path: "profile",
+                element: <EditForm />,
+              },
+              {
                 path: "password",
                 element: <ChangePassword />,
               },

@@ -17,7 +17,9 @@ export default function Messages({
       : 0;
     if (!browser_active) {
     } else {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      setTimeout(() => {
+        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      }, 100);
       seenMessage(
         messages.filter((message) => message.author !== authUser.uid).at(-1),
         conversationId

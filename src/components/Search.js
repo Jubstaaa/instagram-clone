@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 function Search({
   className,
   type = null,
-  setMessageModal = null,
+  setMessage = null,
   post = null,
   userData = null,
 }) {
@@ -56,7 +56,7 @@ function Search({
     <div ref={searchRef} className={`"w-[268px] relative group ${className}`}>
       <span
         className={classNames({
-          "absolute text-[#8e8e8e] pointer-events-none top-0 left-0 h-9 w-9 flex items-center justify-center": true,
+          "absolute text-secondaryLink pointer-events-none top-0 left-0 h-9 w-9 flex items-center justify-center": true,
           " hidden ": open,
         })}
       >
@@ -74,7 +74,7 @@ function Search({
         type="text"
         placeholder="Search"
         className={classNames({
-          "h-9 w-full rounded bg-[#efefef] pl-9 outline-none text-[#8e8e8e] focus:text-black": true,
+          "h-9 w-full rounded bg-[#efefef] pl-9 outline-none text-secondaryLink focus:text-black": true,
           "pl-3 pr-9": open,
         })}
       />
@@ -102,19 +102,19 @@ function Search({
                   <Link
                     onClick={async () => {
                       await checkChatExist(authUser, user, navigate);
-                      setMessageModal(false);
+                      setMessage(false);
                     }}
                     className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     <div className="flex items-center justify-start space-x-2 ">
                       <img
-                        className="h-11 w-11 inline-block rounded-full object-cover "
+                        className="profilePhoto"
                         src={user.photoURL || "/img/no-avatar.jpeg"}
                         alt=""
                       />
                       <div className="flex flex-col items-start justify-center">
                         <span className="font-semibold">{user.username}</span>
-                        <span className="text-[#8e8e8e]">
+                        <span className="text-secondaryLink">
                           {user.displayName}
                         </span>
                       </div>
@@ -133,19 +133,19 @@ function Search({
                         userData,
                         conversationId
                       );
-                      setMessageModal(false);
+                      setMessage(false);
                     }}
                     className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
                     <div className="flex items-center justify-start space-x-2 ">
                       <img
-                        className="h-11 w-11 inline-block rounded-full object-cover "
+                        className="profilePhoto"
                         src={user.photoURL || "/img/no-avatar.jpeg"}
                         alt=""
                       />
                       <div className="flex flex-col items-start justify-center">
                         <span className="font-semibold">{user.username}</span>
-                        <span className="text-[#8e8e8e]">
+                        <span className="text-secondaryLink">
                           {user.displayName}
                         </span>
                       </div>
@@ -162,13 +162,13 @@ function Search({
                   >
                     <div className="flex items-center justify-start space-x-2 ">
                       <img
-                        className="h-11 w-11 inline-block rounded-full object-cover "
+                        className="profilePhoto"
                         src={user.photoURL || "/img/no-avatar.jpeg"}
                         alt=""
                       />
                       <div className="flex flex-col items-start justify-center">
                         <span className="font-semibold">{user.username}</span>
-                        <span className="text-[#8e8e8e]">
+                        <span className="text-secondaryLink">
                           {user.displayName}
                         </span>
                       </div>

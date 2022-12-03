@@ -12,8 +12,10 @@ function Header() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [openMenu, setOpenMenu] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
   const [modal, setModal] = useState(false);
   const menuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const [notificationModal, setNotificationModal] = useState(false);
   const notificationRef = useRef(null);
   const [notifications, setNotifications] = useState(0);
@@ -24,8 +26,8 @@ function Header() {
     setNotifications(0);
     let final = 0;
     const arr = await checkUnreadedMessages(user);
-    arr.map((item) => {
-      if (item?.unread === true && item.author !== user.uid) {
+    arr?.map((item) => {
+      if (item?.unread === true && item?.author !== user?.uid) {
         final++;
       }
     });
@@ -43,6 +45,21 @@ function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuRef]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      ) {
+        setOpenMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileMenuRef]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -100,10 +117,13 @@ function Header() {
                 </div>
               )}
             </Link>
-            <div className="relative order-2 sm:order-none">
+            <div
+              className="relative order-2 sm:order-none"
+              ref={notificationRef}
+            >
               <Icon
                 onClick={() => {
-                  setNotificationModal(true);
+                  setNotificationModal(!notificationModal);
                 }}
                 name="heart"
                 className="cursor-pointer"
@@ -134,41 +154,38 @@ function Header() {
               onClick={() => {
                 setOpenMenu(!openMenu);
               }}
-              ref={menuRef}
               className="avatar cursor-pointer w-7 h-7 relative sm:flex hidden"
+              ref={menuRef}
             >
               <img
                 className="rounded-full h-full w-full object-cover"
-                src={user.photoURL || "/img/no-avatar.jpeg"}
+                src={user?.photoURL || "/img/no-avatar.jpeg"}
               />
               {openMenu && (
-                <div className="absolute right-0 top-9 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div
+                  ref={menuRef}
+                  className="absolute right-0 top-9 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                >
                   <div className="py-1 ">
                     <Link
-                      to={`/${user.username}`}
-                      className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
+                      to={`/${user?.username}`}
+                      className="profileModalItem"
                     >
                       <CgProfile size={22} className="mr-2" />
                       Profile
                     </Link>
                     <Link
-                      to={`/${user.username}/saved`}
-                      className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
+                      to={`/${user?.username}/saved`}
+                      className="profileModalItem"
                     >
                       <Icon name="bookmark" size={22} className="mr-2" />
                       Saved
                     </Link>
-                    <Link
-                      to="/accounts/edit"
-                      className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
-                    >
+                    <Link to="/accounts/edit" className="profileModalItem">
                       <Icon name="settings" size={22} className="mr-2" />
                       Settings
                     </Link>
-                    <a
-                      href="#"
-                      className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
-                    >
+                    <a href="#" className="profileModalItem">
                       <Icon name="switch" size={22} className="mr-2" />
                       Switch accounts
                     </a>
@@ -193,10 +210,10 @@ function Header() {
               ref={notificationRef}
               className="bg-white rounded-lg shadow absolute top-[61px] right-0 "
             >
-              <ul className=" text-center min-h-[250px] w-[400px] h-[250px] max-h-[350px] overflow-auto relative ">
+              <ul className=" text-center min-h-[250px] sm:w-[400px] w-screen h-[250px] max-h-[350px] overflow-auto relative ">
                 {logs
                   ?.sort((a, b) => b.date - a.date)
-                  .map((notification, i) => (
+                  ?.map((notification, i) => (
                     <Notification
                       key={i}
                       notification={notification}
@@ -224,43 +241,37 @@ function Header() {
 
         <div
           onClick={() => {
-            setOpenMenu(!openMenu);
+            setMobileMenu(!mobileMenu);
           }}
           ref={menuRef}
           className="avatar cursor-pointer w-7 h-7 relative"
         >
           <img
             className="rounded-full h-full w-full object-cover"
-            src={user.photoURL || "/img/no-avatar.jpeg"}
+            src={user?.photoURL || "/img/no-avatar.jpeg"}
           />
-          {openMenu && (
-            <div className="absolute bottom-12 -right-12 sm:right-0 sm:top-9 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          {mobileMenu && (
+            <div
+              ref={mobileMenuRef}
+              className="absolute bottom-12 -right-12 sm:right-0 sm:top-9 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            >
               <div className="py-1 ">
-                <Link
-                  to={`/${user.username}`}
-                  className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
-                >
+                <Link to={`/${user?.username}`} className="profileModalItem">
                   <CgProfile size={22} className="mr-2" />
                   Profile
                 </Link>
                 <Link
-                  to={`/${user.username}/saved`}
-                  className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
+                  to={`/${user?.username}/saved`}
+                  className="profileModalItem"
                 >
                   <Icon name="bookmark" size={22} className="mr-2" />
                   Saved
                 </Link>
-                <Link
-                  to="/accounts/edit"
-                  className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
-                >
+                <Link to="/accounts/edit" className="profileModalItem">
                   <Icon name="settings" size={22} className="mr-2" />
                   Settings
                 </Link>
-                <a
-                  href="#"
-                  className="text-black font-medium block px-4 py-2 text-sm flex items-center justify-start hover:bg-gray-100 hover:text-gray-900"
-                >
+                <a href="#" className="profileModalItem">
                   <Icon name="switch" size={22} className="mr-2" />
                   Switch accounts
                 </a>

@@ -1,12 +1,19 @@
 import Icon from "components/Icon";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import classNames from "classnames";
 import ChatList from "pages/inbox/components/chatlist";
 
-export default function Sidebar({ setMessageModal, messages }) {
+export default function Sidebar({ setMessage, messages }) {
   const user = useSelector((state) => state.auth.user);
-
+  const { conversationId } = useParams();
   return (
-    <aside className="w-[349px] flex-shrink-0 border-r border-gray-300">
+    <aside
+      className={classNames({
+        "w-full sm:w-[349px]  flex-shrink-0 border-r border-gray-300": true,
+        "hidden sm:block": conversationId,
+      })}
+    >
       <header className="h-[60px] border-b border-gray-300 flex justify-between items-center px-5">
         <button className="flex items-center mx-auto gap-x-2.5 text-base font-semibold">
           {user.username}
@@ -14,7 +21,7 @@ export default function Sidebar({ setMessageModal, messages }) {
         </button>
         <Icon
           onClick={() => {
-            setMessageModal(true);
+            setMessage(true);
           }}
           className="cursor-pointer"
           name="new-message"

@@ -28,7 +28,7 @@ function Post({ post, user, setForce = null, force = null }) {
         onClick={() => {
           setPostModal(true);
         }}
-        className="w-72 h-72 relative col-span-1 group cursor-pointer"
+        className="w-28 h-28 sm:w-72 max-w-full sm:h-72 max-h-full  relative col-span-1 group cursor-pointer"
       >
         {post.file.type.includes("image") ? (
           <img

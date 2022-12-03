@@ -5,43 +5,43 @@ function Footer() {
         className="flex gap-3 items-center justify-center flex-wrap wrap;
 "
       >
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">Meta</a>
         </li>
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">About</a>
         </li>
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">Blog</a>
         </li>
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">Jobs</a>
         </li>
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">Help</a>
         </li>
-        <li className="text-secondaryLink text-xs hover:underline">
+        <li className="footerItemUnderline">
           <a href="/">API</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Privacy</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Terms</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Top Accounts</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Hashtags</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Locations</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Instagram Lite</a>
         </li>
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <a href="/">Contact Uploading & Non-Users</a>
         </li>
       </ul>
@@ -50,7 +50,7 @@ function Footer() {
         className="flex space-x-4 items-center justify-center flex-wrap: wrap;
 "
       >
-        <li className="text-secondaryLink text-xs ">
+        <li className="footerItem ">
           <select className="w-16 bg-transparent">
             <option value="af">Afrikaans</option>
             <option value="cs">Čeština</option>
@@ -105,9 +105,7 @@ function Footer() {
             <option value="uk">Українська</option>
           </select>
         </li>
-        <li className="text-secondaryLink text-xs ">
-          © 2022 Instagram from Meta
-        </li>
+        <li className="footerItem ">© 2022 Instagram from Meta</li>
       </ul>
     </div>
   );
