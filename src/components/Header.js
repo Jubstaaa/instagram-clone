@@ -1,6 +1,6 @@
 import { logout, checkUnreadedMessages } from "firebaseConfig";
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import Search from "./Search";
 import Icon from "./Icon";
@@ -9,7 +9,7 @@ import AddPost from "./AddPost";
 import Notification from "./Notification";
 
 function Header() {
-  const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector((state) => state.auth.user);
   const [openMenu, setOpenMenu] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -80,8 +80,10 @@ function Header() {
     setTimeout(() => {
       checkNotifications();
     }, 500);
-    setLogs([...user?.notifications]);
-  }, [navigate, user]);
+    if (user) {
+      setLogs([...user?.notifications]);
+    }
+  }, [location, user]);
 
   useEffect(() => {
     if (logs?.reverse()[0]?.unread) {
@@ -89,7 +91,7 @@ function Header() {
     } else {
       setLogNotification(false);
     }
-  }, [logs]);
+  }, [location, logs]);
 
   return (
     <>

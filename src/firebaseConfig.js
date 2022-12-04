@@ -665,14 +665,16 @@ export const removeLikes = async (user, post, authUser) => {
 };
 
 export const getFeed = async (following, myPosts) => {
-  const posts = [...myPosts];
-  for (let i = 0; i < following?.length; i++) {
-    const userData = await getFriendInfo(following[i]?.uid);
-    userData?.posts?.map((post) => {
-      posts?.push({ ...post, user: userData });
-    });
+  if (myPosts) {
+    const posts = [...myPosts];
+    for (let i = 0; i < following?.length; i++) {
+      const userData = await getFriendInfo(following[i]?.uid);
+      userData?.posts?.map((post) => {
+        posts?.push({ ...post, user: userData });
+      });
+    }
+    return posts;
   }
-  return posts;
 };
 
 export const createMessage = async (user, authUser) => {
@@ -922,7 +924,7 @@ export const checkUnreadedMessages = async (user) => {
   const messages = await getChatList(user);
   await Promise.all(
     messages?.map(async (messages) => {
-      notifications.push(await getLastMessage(messages?.uid));
+      notifications?.push(await getLastMessage(messages?.uid));
     })
   );
   return notifications;

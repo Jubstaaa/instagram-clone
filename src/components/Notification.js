@@ -83,7 +83,7 @@ function Notification({ notification, setNotificationModal }) {
           </div>
         </Link>
         <div className="flex flex-col justify-between  pr-3  ">
-          {authUser?.following?.find((el) => el.uid === user?.uid) && (
+          {authUser?.following?.find((el) => el.uid === user?.uid) && user && (
             <button
               onClick={() => {
                 setModal(true);
@@ -99,7 +99,7 @@ function Notification({ notification, setNotificationModal }) {
             </button>
           )}
 
-          {!authUser?.following?.find((el) => el.uid === user?.uid) && (
+          {!authUser?.following?.find((el) => el.uid === user?.uid) && user && (
             <button
               onClick={async () => {
                 setLoading(true);

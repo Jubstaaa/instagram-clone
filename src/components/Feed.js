@@ -9,7 +9,7 @@ function Feed() {
 
   const getPosts = async () => {
     setPosts(
-      (await getFeed(authUser?.following, authUser?.posts)).sort(
+      (await getFeed(authUser?.following, authUser?.posts))?.sort(
         ({ date: a }, { date: b }) => b - a
       )
     );

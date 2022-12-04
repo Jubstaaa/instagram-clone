@@ -35,7 +35,7 @@ export default function InboxLayout() {
       <Outlet context={[setMessage, messages, setMessages]} />
 
       {message && (
-        <div className="">
+        <div className="darkModal">
           <Helmet>
             <title>New Message • Direct</title>
           </Helmet>

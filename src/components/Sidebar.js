@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
 import Suggestion from "./Suggestion";
 function Sidebar() {
+  const [suggestionUsers, setSuggestionUsers] = useState([]);
   const user = useSelector((state) => state.auth.user);
   const getDifference = (array1, array2) => {
     return array1?.filter((object1) => {
@@ -11,9 +13,9 @@ function Sidebar() {
       });
     });
   };
-
-  const suggestionUsers = getDifference(user.followers, user.following);
-
+  useEffect(() => {
+    setSuggestionUsers(getDifference(user?.followers, user?.following));
+  }, [user]);
   return (
     <section className="w-[22rem] hidden lg:block lg:fixed ml-[32rem] space-y-4 pt-4 px-4">
       <div className="flex items-center justify-between">

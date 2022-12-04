@@ -12,7 +12,6 @@ import {
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import Comment from "./Comment";
 import TimeAgo from "react-timeago";
-import { Helmet } from "react-helmet";
 import Likes from "./Likes";
 import useClipboard from "react-use-clipboard";
 import { toast } from "react-hot-toast";
@@ -133,7 +132,7 @@ function ExactPost({
     <>
       <div
         ref={modalRef}
-        className="relative max-w-[1219px]  max-h-[513px] px-4  m-auto w-full"
+        className="relative max-w-[calc(100vw-5rem)] my-28 sm:max-w-[1219px]  sm:max-h-[513px] m-auto sm:p-4 w-full "
       >
         <div className="bg-white rounded-lg  m-auto shadow relative  ">
           <div className="flex-col sm:flex-row sm:min-h-[513px] sm:h-[513px] flex items-center justify-between relative">
@@ -207,7 +206,7 @@ function ExactPost({
                   )}
                 </div>
                 <div className="items-start justify-start space-x-5 w-full  border-b">
-                  <div className=" flex flex-col justify-center items-center  h-72">
+                  <div className=" flex flex-col justify-center items-center h-36  sm:h-72">
                     {post.title || comments ? (
                       <ul className="w-full h-full max-h-full overflow-auto p-4 flex flex-col space-y-3">
                         {post.title && (
