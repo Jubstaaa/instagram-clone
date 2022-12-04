@@ -67,7 +67,8 @@
     - You can use emoji, send picture and heart in the message section.
     - If a url is detected in message it will turn it into a clickable link.
   ### Notifications
-    Under construction
+    - You can see likes, comments and follow notifications.
+    - Red dot appears when there are unread notifications.
   ### Profile
     - In this section you can see your profile information.
     - You can see posts you have shared and posts you have saved.
