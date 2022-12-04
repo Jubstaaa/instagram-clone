@@ -36,7 +36,7 @@
   ### UI 
     - I worked on UI based on the Instagram design.
     - According to the page you are on, the title is dynamically updated with react-helmet.
-    - Responsive Design(Soon)
+    - Responsive Design
   ### Login Page
     - You can login with your registered account.
     - You can login with Facebook(Soon)
