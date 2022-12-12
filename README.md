@@ -5,7 +5,7 @@
 ![Imgur](https://i.imgur.com/n0eCC05.jpg)
 
 > Click to view live demo
-> (https://jubstaa-iclone.netlify.app)
+> (jubstaa-igclone-myproject.netlify.app)
 
 ## Techs I Used
 
